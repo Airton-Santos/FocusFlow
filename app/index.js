@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image, Text, Dimensions } from 'react-native';
+import { StyleSheet, View, Image, Text} from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function Index() {
@@ -9,7 +9,7 @@ export default function Index() {
   useEffect(() => {
     // Redireciona para outra tela após 5s
     const timer = setTimeout(() => {
-      router.push('/main');
+      router.replace('/main');
     }, 5000); // 5000 equivale a 5 segundos
 
     return () => clearTimeout(timer);  // Corrigido: "return" escrito corretamente
