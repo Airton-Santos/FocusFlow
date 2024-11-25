@@ -14,18 +14,22 @@ const entrar = () => {
 
       <TextInput 
         style={styles.inputEmail} 
-        mode='flat'
-        label='E-mail'
+        mode='outlined'
+        placeholder='E-mail'
         underlineColor='transparent'
+        activeOutlineColor='transparent'
+        outlineColor='transparent'
         activeUnderlineColor='transparent'
       />
 
         <TextInput 
         style={styles.inputSenha} 
-        mode='flat'
-        label='Senha'
+        mode='outlined'
+        placeholder='Senha'
         secureTextEntry
         underlineColor='transparent'
+        activeOutlineColor='transparent'
+        outlineColor='transparent'
         activeUnderlineColor='transparent'
       />
 

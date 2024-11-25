@@ -11,6 +11,7 @@ const main = () => {
       <Text style={styles.text}>Organize seu tempo e conquiste seus objetivos!</Text>
       <Link asChild href='/cadastrar'><Button mode='outlined' style={styles.btnCadastrar}>Cadastrar</Button></Link>
       <Link asChild href='/entrar'><Button mode='outlined' style={styles.btnEntrar}>Entrar</Button></Link>
+      <Link asChild href='/home'><Button mode='outlined' style={styles.btnEntrar}>Home</Button></Link>
     </View>
   )
 }
