@@ -3,52 +3,70 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Link } from 'expo-router';
 
-
 const cadastrar = () => {
-
-
   return (
     <View style={styles.container}>
-      <Image style={styles.ElementWaterTop} source={require('../assets/Elements/ElementWater.png')}/>
 
+      {/* Elemento Superior */}
+      <View style={styles.headerContainer}>
+        <Image 
+          style={styles.ElementWaterTop} 
+          source={require('../assets/Elements/ElementWater.png')}
+        />
+      </View>
 
-      <Image style={styles.logo} source={require('../assets/Elements/Logo.png')} />
-      <Text style={styles.text}>Cadastre-se</Text>
-
-      <TextInput 
-        style={styles.inputNome} 
-        mode='outlined'
-        placeholder='Nome'
-        underlineColor='transparent'
-        activeOutlineColor='transparent'
-        outlineColor='transparent'
-        activeUnderlineColor='transparent'
-      />
-
-      <TextInput 
-        style={styles.inputEmail} 
-        mode='outlined'
-        placeholder='E-mail'
-        underlineColor='transparent'
-        activeOutlineColor='transparent'
-        outlineColor='transparent'
-        activeUnderlineColor='transparent'
-      />
+      {/* Conteúdo Central */}
+      <View style={styles.content}>
+        <Image 
+          style={styles.logo} 
+          source={require('../assets/Elements/Logo.png')} 
+        />
+        <Text style={styles.text}>Cadastre-se</Text>
 
         <TextInput 
-        style={styles.inputSenha} 
-        mode='flat'
-        placeholder='Senha'
-        secureTextEntry
-        underlineColor='transparent'
-        activeOutlineColor='transparent'
-        outlineColor='transparent'
-        activeUnderlineColor='transparent'
-      />
+          style={styles.inputNome} 
+          mode="outlined"
+          placeholder="Nome"
+          underlineColor="transparent"
+          activeOutlineColor="transparent"
+          outlineColor="transparent"
+          activeUnderlineColor="transparent"
+        />
 
-        <Link asChild href='/entrar'><Button mode='outlined' style={styles.btnCadastrarSe}>Cadastrar</Button></Link>
+        <TextInput 
+          style={styles.inputEmail} 
+          mode="outlined"
+          placeholder="E-mail"
+          underlineColor="transparent"
+          activeOutlineColor="transparent"
+          outlineColor="transparent"
+          activeUnderlineColor="transparent"
+        />
 
-      <Image style={styles.ElementWaterBottom} source={require('../assets/Elements/ElementWater.png')}/>
+        <TextInput 
+          style={styles.inputSenha} 
+          mode="flat"
+          placeholder="Senha"
+          secureTextEntry
+          underlineColor="transparent"
+          activeOutlineColor="transparent"
+          outlineColor="transparent"
+          activeUnderlineColor="transparent"
+        />
+
+        <Link asChild href="/entrar">
+          <Button mode="outlined" style={styles.btnCadastrarSe}>Cadastrar</Button>
+        </Link>
+      </View>
+
+      {/* Elemento Inferior */}
+      <View style={styles.footerContainer}>
+        <Image 
+          style={styles.ElementWaterBottom} 
+          source={require('../assets/Elements/ElementWater.png')}
+        />
+      </View>
+
     </View>
   );
 };
@@ -59,17 +77,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#2D2D29',
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+
+  // Estilo para o elemento superior (canto superior direito)
+  headerContainer: {
+    justifyContent: 'flex-end',
   },
 
   ElementWaterTop: {
-    width: 320,
-    height: 320,
-    transform: [{rotate: '90deg'}],
-    right: 100,
-    top: 0,
-    position: 'absolute'
+    width: 210,
+    height: 210,
+    transform: [{ rotate: '90deg' }],
+  },
+
+  // Estilo para o conteúdo central
+  content: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    marginBottom: 50,  // Ajuste para mover o conteúdo mais para cima
   },
 
   logo: {
@@ -80,46 +105,52 @@ const styles = StyleSheet.create({
   text: {
     margin: 10,
     fontSize: 20,
-    color: '#FFFFFF',  // Cor do texto para garantir contraste com o fundo
+    color: '#FFFFFF',
   },
 
   inputNome: {
-    backgroundColor: 'transparent', // Remover fundo
+    backgroundColor: 'transparent',
     margin: 10,
     width: 325,
-    borderColor: '#92C7A3',  // Cor da borda
-    borderWidth: 1,  // A largura da borda
+    borderColor: '#92C7A3',
+    borderWidth: 1,
   },
 
   inputEmail: {
-    backgroundColor: 'transparent', // Remover fundo
+    backgroundColor: 'transparent',
     margin: 10,
     width: 325,
-    borderColor: '#92C7A3',  // Cor da borda
-    borderWidth: 1,  // A largura da borda
+    borderColor: '#92C7A3',
+    borderWidth: 1,
   },
 
   inputSenha: {
-    backgroundColor: 'transparent', // Remover fundo
+    backgroundColor: 'transparent',
     margin: 10,
     width: 325,
-    borderColor: '#92C7A3',  // Cor da borda
-    borderWidth: 1,  // A largura da borda
+    borderColor: '#92C7A3',
+    borderWidth: 1,
   },
 
   btnCadastrarSe: {
     margin: 10,
     width: 127,
     height: 42,
-    backgroundColor: '#3CA2A2'
+    backgroundColor: '#3CA2A2',
+  },
+
+  // Estilo para o elemento inferior (canto inferior direito)
+  footerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',  // Alinhando para a direita
   },
 
   ElementWaterBottom: {
-    width: 320,
-    height: 320,
-    transform: [{rotate: '-90deg'}],
-    left: 100,
-    bottom: 0,
-    position: 'absolute'
-  }
+    width: 210,
+    height: 210,
+    transform: [{ rotate: '-90deg' }],
+  },
 });

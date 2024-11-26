@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#2D2D29',  // Cor de fundo padrão
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',  // Para garantir que os elementos fiquem no centro
   },
   logo: {
     width: 150,
