@@ -93,8 +93,6 @@ const styles = StyleSheet.create({
   // Estilo para o conteúdo central
   content: {
     alignItems: 'center',
-    paddingVertical: 20,
-    marginBottom: 50,  // Ajuste para mover o conteúdo mais para cima
   },
 
   logo: {
@@ -103,14 +101,14 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    margin: 10,
+    margin: 5,
     fontSize: 20,
     color: '#FFFFFF',
   },
 
   inputNome: {
     backgroundColor: 'transparent',
-    margin: 10,
+    margin: 5,
     width: 325,
     borderColor: '#92C7A3',
     borderWidth: 1,
@@ -118,7 +116,7 @@ const styles = StyleSheet.create({
 
   inputEmail: {
     backgroundColor: 'transparent',
-    margin: 10,
+    margin: 5,
     width: 325,
     borderColor: '#92C7A3',
     borderWidth: 1,
@@ -126,14 +124,14 @@ const styles = StyleSheet.create({
 
   inputSenha: {
     backgroundColor: 'transparent',
-    margin: 10,
+    margin: 5,
     width: 325,
     borderColor: '#92C7A3',
     borderWidth: 1,
   },
 
   btnCadastrarSe: {
-    margin: 10,
+    margin: 5,
     width: 127,
     height: 42,
     backgroundColor: '#3CA2A2',
@@ -141,11 +139,9 @@ const styles = StyleSheet.create({
 
   // Estilo para o elemento inferior (canto inferior direito)
   footerContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
     flexDirection: 'row',
-    justifyContent: 'flex-end',  // Alinhando para a direita
+    justifyContent: 'flex-end',
+    
   },
 
   ElementWaterBottom: {

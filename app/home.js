@@ -24,6 +24,7 @@ const home = () => {
 
       {/* Seção de Tarefas */}
       <View style={styles.taskSection}>
+
         <ImageBackground style={styles.backgroundTarefas} source={require('../assets/Elements/backgroundtarefas.png')}>
           <Text style={styles.taskTitle}>Minhas Tarefas</Text>
           <FlatList
@@ -36,6 +37,7 @@ const home = () => {
             )}
           />
         </ImageBackground>
+        
       </View>
 
       {/* Navegação */}
@@ -54,10 +56,10 @@ const styles = StyleSheet.create({
   },
 
   backgroundUser: {
-    width: '100%', // Garante que ocupe 100% da largura da tela
-    height: 200, // Define uma altura fixa para o cabeçalho
-    justifyContent: 'center', // Alinha o conteúdo ao centro verticalmente
-    alignItems: 'center', // Alinha o conteúdo ao centro horizontalmente
+    width: '100%', 
+    height: 200, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
   },
 
   user: {
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
   },
 
   taskItem: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#3CA2A2',
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
 
   taskText: {
     fontSize: 16,
-    color: '#2D2D29',
+    color: '#FFF',
   },
 
   navigation: {
