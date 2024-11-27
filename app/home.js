@@ -1,13 +1,19 @@
 import { StyleSheet, Text, View, Image, ImageBackground, FlatList } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, IconButton } from 'react-native-paper';
 
-const home = () => {
-  const tasks = [
+const Home = () => {
+  // Estado das tarefas
+  const [tasks, setTasks] = useState([
     { id: '1', title: 'Tarefa 1' },
     { id: '2', title: 'Tarefa 2' },
     { id: '3', title: 'Tarefa 3' },
-  ];
+  ]);
+
+  // Função para remover uma tarefa
+  const removeTask = (id) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
 
   return (
     <View style={styles.container}>
@@ -36,7 +42,11 @@ const home = () => {
             renderItem={({ item }) => (
               <View style={styles.taskItem}>
                 <Text style={styles.taskText}>{item.title}</Text>
-                <IconButton icon="trash-can" size={20} />
+                <IconButton
+                  icon="trash-can"
+                  size={20}
+                  onPress={() => removeTask(item.id)} // Remove tarefa ao clicar
+                />
               </View>
             )}
           />
@@ -68,7 +78,7 @@ const home = () => {
   );
 };
 
-export default home;
+export default Home;
 
 const styles = StyleSheet.create({
   container: {

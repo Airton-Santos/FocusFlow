@@ -46,6 +46,7 @@ const Cadastrar = () => {
         <TextInput 
           style={styles.input}
           mode="outlined"
+          cursorColor='#fff'
           textColor='#fff'
           placeholder="Nome"
           placeholderTextColor="#A3B4B4" // Placeholder destacado
@@ -57,6 +58,7 @@ const Cadastrar = () => {
           style={styles.input}
           mode="outlined"
           textColor='#fff'
+          cursorColor='#fff'
           placeholder="E-mail"
           placeholderTextColor="#A3B4B4" // Placeholder destacado
           underlineColor="transparent"
@@ -67,6 +69,7 @@ const Cadastrar = () => {
           style={styles.input}
           textColor='#fff'
           mode="outlined"
+          cursorColor='#fff'
           placeholder="Senha"
           placeholderTextColor="#A3B4B4" // Placeholder destacado
           secureTextEntry

@@ -25,6 +25,7 @@ const Entrar = () => {
         <TextInput
           style={styles.input}
           mode="outlined"
+          cursorColor='#fff'
           placeholder="E-mail"
           textColor='#fff'
           placeholderTextColor="#A3B4B4" // Placeholder destacado
@@ -35,6 +36,7 @@ const Entrar = () => {
         <TextInput
           style={styles.input}
           mode="outlined"
+          cursorColor='#fff'
           textColor='#fff'
           placeholder="Senha"
           placeholderTextColor="#A3B4B4" // Placeholder destacado
