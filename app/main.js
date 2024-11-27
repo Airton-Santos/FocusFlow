@@ -1,22 +1,71 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Button } from 'react-native-paper'
+import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { Link } from 'expo-router';
+import * as Font from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
+const loadFonts = () => {
+  return Font.loadAsync({
+    'Silkscreen-Bold': require('../assets/fonts/Silkscreen-Bold.ttf'),
+    'Silkscreen-Regular': require('../assets/fonts/Silkscreen-Regular.ttf'),
+  });
+};
 
-const main = () => {
+const Main = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={loadFonts}
+        onFinish={() => setFontsLoaded(true)}
+        onError={(err) => console.error(err)}
+      />
+    );
+  }
+
   return (
     <View style={styles.main}>
-      <Text style={styles.title}>Bem vindo ao Focus Flow</Text>
+      <Text style={styles.title}>Bem-vindo ao Focus Flow</Text>
       <Text style={styles.text}>Organize seu tempo e conquiste seus objetivos!</Text>
-      <Link asChild href='/cadastrar'><Button mode='outlined' style={styles.btnCadastrar}>Cadastrar</Button></Link>
-      <Link asChild href='/entrar'><Button mode='outlined' style={styles.btnEntrar}>Entrar</Button></Link>
-      <Link asChild href='/home'><Button mode='outlined' style={styles.btnEntrar}>Home</Button></Link>
-    </View>
-  )
-}
+      <Link asChild href="/cadastrar">
+        <Button
+          textColor="#fff"
+          mode="outlined"
+          style={styles.btn}
+          labelStyle={styles.btnText}
+        >
+          Cadastrar
+        </Button>
+      </Link>
 
-export default main
+      <Link asChild href="/entrar">
+        <Button
+          textColor="#fff"
+          mode="outlined"
+          style={styles.btn}
+          labelStyle={styles.btnText}
+        >
+          Entrar
+        </Button>
+      </Link>
+      
+      <Link asChild href="/home">
+        <Button
+          textColor="#fff"
+          mode="outlined"
+          style={styles.btn}
+          labelStyle={styles.btnText}
+        >
+          Home
+        </Button>
+      </Link>
+    </View>
+  );
+};
+
+export default Main;
 
 const styles = StyleSheet.create({
   main: {
@@ -28,28 +77,31 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 20,
+    fontFamily: 'Silkscreen-Bold',
+    color: '#FFFFFF', // Texto branco para contraste
+    marginBottom: 10,
   },
 
   text: {
     margin: 10,
     fontSize: 15,
+    fontFamily: 'Silkscreen-Regular',
+    color: '#D1D1D1', // Cinza claro para contraste suave
+    textAlign: 'center',
   },
 
-  btnCadastrar: {
+  btn: {
     margin: 10,
     backgroundColor: '#3CA2A2',
     width: 265,
     height: 42,
-    color: '#DFECE6'
+    justifyContent: 'center',
+    borderRadius: 8,
   },
 
-  btnEntrar: {
-    margin: 10,
-    backgroundColor: '#3CA2A2',
-    width: 265,
-    height: 42,
-    color: '#DFECE6'
+  btnText: {
+    fontFamily: 'Silkscreen-Regular', // Fonte personalizada aplicada no texto do botão
+    fontSize: 14,
   },
-
-})
+});

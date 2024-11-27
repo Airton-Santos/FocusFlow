@@ -1,12 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Link } from 'expo-router';
+import * as Font from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
-const cadastrar = () => {
+const loadFonts = () => {
+  return Font.loadAsync({
+    'Silkscreen-Bold': require('../assets/fonts/Silkscreen-Bold.ttf'),
+    'Silkscreen-Regular': require('../assets/fonts/Silkscreen-Regular.ttf'),
+  });
+};
+
+const Cadastrar = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={loadFonts}
+        onFinish={() => setFontsLoaded(true)}
+        onError={(err) => console.error(err)}
+      />
+    );
+  }
+
   return (
     <View style={styles.container}>
-
       {/* Elemento Superior */}
       <View style={styles.headerContainer}>
         <Image 
@@ -24,38 +44,44 @@ const cadastrar = () => {
         <Text style={styles.text}>Cadastre-se</Text>
 
         <TextInput 
-          style={styles.inputNome} 
+          style={styles.input}
           mode="outlined"
+          textColor='#fff'
           placeholder="Nome"
+          placeholderTextColor="#A3B4B4" // Placeholder destacado
           underlineColor="transparent"
           activeOutlineColor="transparent"
-          outlineColor="transparent"
-          activeUnderlineColor="transparent"
         />
 
         <TextInput 
-          style={styles.inputEmail} 
+          style={styles.input}
           mode="outlined"
+          textColor='#fff'
           placeholder="E-mail"
+          placeholderTextColor="#A3B4B4" // Placeholder destacado
           underlineColor="transparent"
-          activeOutlineColor="transparent"
-          outlineColor="transparent"
-          activeUnderlineColor="transparent"
+          activeOutlineColor="transparent" 
         />
 
         <TextInput 
-          style={styles.inputSenha} 
-          mode="flat"
+          style={styles.input}
+          textColor='#fff'
+          mode="outlined"
           placeholder="Senha"
+          placeholderTextColor="#A3B4B4" // Placeholder destacado
           secureTextEntry
           underlineColor="transparent"
           activeOutlineColor="transparent"
-          outlineColor="transparent"
-          activeUnderlineColor="transparent"
         />
 
         <Link asChild href="/entrar">
-          <Button mode="outlined" style={styles.btnCadastrarSe}>Cadastrar</Button>
+          <Button 
+            mode="outlined" 
+            style={styles.btnCadastrarSe} 
+            labelStyle={styles.btnText}
+          >
+            Cadastrar
+          </Button>
         </Link>
       </View>
 
@@ -66,12 +92,11 @@ const cadastrar = () => {
           source={require('../assets/Elements/ElementWater.png')}
         />
       </View>
-
     </View>
   );
 };
 
-export default cadastrar;
+export default Cadastrar;
 
 const styles = StyleSheet.create({
   container: {
@@ -79,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2D2D29',
   },
 
-  // Estilo para o elemento superior (canto superior direito)
+  // Elemento superior
   headerContainer: {
     justifyContent: 'flex-end',
   },
@@ -90,7 +115,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '90deg' }],
   },
 
-  // Estilo para o conteúdo central
+  // Conteúdo central
   content: {
     alignItems: 'center',
   },
@@ -103,45 +128,39 @@ const styles = StyleSheet.create({
   text: {
     margin: 5,
     fontSize: 20,
-    color: '#FFFFFF',
+    fontFamily: 'Silkscreen-Bold',
+    color: '#FFFFFF', // Texto branco para contraste
   },
 
-  inputNome: {
+  input: {
     backgroundColor: 'transparent',
+    color: '#FFFFF' ,
     margin: 5,
     width: 325,
+    fontFamily: 'Silkscreen-Regular', // Fonte personalizada
     borderColor: '#92C7A3',
     borderWidth: 1,
-  },
-
-  inputEmail: {
-    backgroundColor: 'transparent',
-    margin: 5,
-    width: 325,
-    borderColor: '#92C7A3',
-    borderWidth: 1,
-  },
-
-  inputSenha: {
-    backgroundColor: 'transparent',
-    margin: 5,
-    width: 325,
-    borderColor: '#92C7A3',
-    borderWidth: 1,
+    paddingHorizontal: 10,
   },
 
   btnCadastrarSe: {
     margin: 5,
-    width: 127,
-    height: 42,
+    width: 150,
+    height: 50,
     backgroundColor: '#3CA2A2',
+    justifyContent: 'center',
   },
 
-  // Estilo para o elemento inferior (canto inferior direito)
+  btnText: {
+    fontFamily: 'Silkscreen-Regular', // Fonte personalizada aplicada ao botão
+    fontSize: 14,
+    color: '#FFFFFF', // Texto branco para contraste
+  },
+
+  // Elemento inferior
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    
   },
 
   ElementWaterBottom: {
