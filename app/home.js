@@ -48,19 +48,19 @@ const home = () => {
         <Button>
           <Image
             style={styles.medalhaPNG}
-            source={require('../assets/Elements/medalha.png')}
+            source={require('../assets/Elements/Lembretes.png')}
           />
         </Button>
         <Button>
           <Image
             style={styles.maisPNG}
-            source={require('../assets/Elements/mais.png')}
+            source={require('../assets/Elements/Mais.png')}
           />
         </Button>
         <Button>
           <Image
             style={styles.configPNG}
-            source={require('../assets/Elements/configuracao.png')}
+            source={require('../assets/Elements/Configuracao.png')}
           />
         </Button>
       </View>
@@ -144,12 +144,9 @@ const styles = StyleSheet.create({
 
   navigation: {
     height: 90,
-    width: '90%',
+    width: '100%',
     backgroundColor: '#215A6D',
     bottom: 0,
-    borderRadius: 50,
-    borderColor: '#92C7A3',
-    borderWidth: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
     flexDirection: 'row',
@@ -158,7 +155,7 @@ const styles = StyleSheet.create({
   maisPNG: {
     width: 65,
     height: 65,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#FFF',
     borderRadius: 50,
     borderColor: '#92C7A3',
     borderWidth: 1,
@@ -167,7 +164,7 @@ const styles = StyleSheet.create({
   configPNG: {
     width: 65,
     height: 65,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#FFF',
     borderRadius: 50,
     borderColor: '#92C7A3',
     borderWidth: 1,
@@ -176,7 +173,7 @@ const styles = StyleSheet.create({
   medalhaPNG: {
     width: 65,
     height: 65,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#FFF',
     borderRadius: 50,
     borderColor: '#92C7A3',
     borderWidth: 1,
