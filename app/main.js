@@ -2,28 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Link } from 'expo-router';
-import * as Font from 'expo-font';
-import AppLoading from 'expo-app-loading';
 
-const loadFonts = () => {
-  return Font.loadAsync({
-    'Silkscreen-Bold': require('../assets/fonts/Silkscreen-Bold.ttf'),
-    'Silkscreen-Regular': require('../assets/fonts/Silkscreen-Regular.ttf'),
-  });
-};
-
-const Main = () => {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setFontsLoaded(true)}
-        onError={(err) => console.error(err)}
-      />
-    );
-  }
+const main = () => {
 
   return (
     <View style={styles.main}>
@@ -65,7 +45,7 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default main;
 
 const styles = StyleSheet.create({
   main: {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { Link } from 'expo-router';
+import { Link } from 'expo-router'; // Expo Router
 
-const Entrar = () => {
+const entrar = () => {
   return (
     <View style={styles.container}>
       {/* Elemento Superior */}
@@ -45,7 +45,8 @@ const Entrar = () => {
           activeOutlineColor="transparent" 
         />
 
-        <Link asChild href="/entrar">
+        {/* Link para a página Home */}
+        <Link asChild href="/home">
           <Button
             mode="outlined"
             style={styles.btnEntrar}
@@ -67,7 +68,7 @@ const Entrar = () => {
   );
 };
 
-export default Entrar;
+export default entrar;
 
 const styles = StyleSheet.create({
   container: {

@@ -2,28 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Link } from 'expo-router';
-import * as Font from 'expo-font';
-import AppLoading from 'expo-app-loading';
 
-const loadFonts = () => {
-  return Font.loadAsync({
-    'Silkscreen-Bold': require('../assets/fonts/Silkscreen-Bold.ttf'),
-    'Silkscreen-Regular': require('../assets/fonts/Silkscreen-Regular.ttf'),
-  });
-};
-
-const Cadastrar = () => {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setFontsLoaded(true)}
-        onError={(err) => console.error(err)}
-      />
-    );
-  }
+const cadastrar = () => {
 
   return (
     <View style={styles.container}>
@@ -99,7 +79,7 @@ const Cadastrar = () => {
   );
 };
 
-export default Cadastrar;
+export default cadastrar;
 
 const styles = StyleSheet.create({
   container: {
