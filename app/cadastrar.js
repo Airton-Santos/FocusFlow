@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Link } from 'expo-router';
+
+
 
 const cadastrar = () => {
 

@@ -1,9 +1,34 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { Link } from 'expo-router'; // Expo Router
+import { Link } from 'expo-router'; 
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import auth from '../firebaseConfig';
+
+
+
+const handlerlogin = () => {
+
+
+  signInWithEmailAndPassword(auth, 'santosairton31508@gmail.com', '30042004')
+  .then((userCredential) => {
+    const user = userCredential.user;
+    console.log('logado com sucesso');
+    console.log(user.uid);
+    
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.error(errorCode);
+    console.error(errorMessage);
+  });
+
+}
 
 const entrar = () => {
+
+
   return (
     <View style={styles.container}>
       {/* Elemento Superior */}
@@ -50,8 +75,9 @@ const entrar = () => {
           <Button
             mode="outlined"
             style={styles.btnEntrar}
-            labelStyle={styles.btnText} // Fonte personalizada para o botão
-          >
+            labelStyle={styles.btnText}
+            onPress={() => handlerlogin()}
+            >
             Entrar
           </Button>
         </Link>
