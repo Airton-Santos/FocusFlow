@@ -1,30 +1,40 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image, Text} from 'react-native';
+import { StyleSheet, View, Image, Text, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 
-export default function index() {
+export default function Index() {
   const router = useRouter();
+  const fadeAnim = new Animated.Value(0); // Valor inicial para animação de fade
 
   useEffect(() => {
-    // Redireciona para outra tela após 5s
+    // Animação para o fade in do logo e nome do app
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+
+    // Redireciona para a tela principal após 5 segundos
     const timer = setTimeout(() => {
       router.replace('/main');
-    }, 5000); // 5000 equivale a 5 segundos
+    }, 5000);
 
-    return () => clearTimeout(timer);  // Corrigido: "return" escrito corretamente
-  }, [router]);
+    return () => clearTimeout(timer);
+  }, [fadeAnim, router]);
 
   return (
     <View style={styles.container}>
-      {/* Outros elementos sobre a animação */}
-      <Image
+      {/* Logo e nome com animação */}
+      <Animated.Image
         source={require('../assets/Elements/Logo.png')}
-        style={styles.logo}
+        style={[styles.logo, { opacity: fadeAnim }]}
       />
-      <Text style={styles.NameApp}>Focus Flow</Text>
+      <Animated.Text style={[styles.NameApp, { opacity: fadeAnim }]}>
+        Focus Flow
+      </Animated.Text>
 
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </View>
   );
 }
@@ -32,19 +42,21 @@ export default function index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2D2D29',  // Cor de fundo padrão
+    backgroundColor: '#1E1E1E', // Cor de fundo mais moderna e suave
     justifyContent: 'center',
     alignItems: 'center',
   },
   logo: {
-    width: 150,
-    height: 150,
-    zIndex: 1,  // Garante que o logo fique no topo
+    width: 180, // Aumenta o tamanho do logo para dar mais destaque
+    height: 180,
+    zIndex: 1,
+    marginBottom: 30, // Distância entre o logo e o nome
   },
   NameApp: {
-    fontSize: 25,
-    marginTop: 20,
-    color: '#FFF',  // Texto branco para contraste
-    zIndex: 1,  // Garante que o texto fique no topo
+    fontSize: 30, // Aumenta o tamanho da fonte
+    fontWeight: 'bold', // Traz mais destaque ao nome
+    color: '#4FD1C5',  // Cor vibrante, fácil de ler e moderna
+    zIndex: 1,
+    letterSpacing: 2, // Distância entre as letras para um visual mais moderno
   },
 });

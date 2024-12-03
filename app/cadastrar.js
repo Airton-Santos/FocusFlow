@@ -1,14 +1,25 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
+
 
 
 
 const cadastrar = () => {
 
+  const router = useRouter(); // Inicializando o roteador
+
+    // Funções para navegação
+    const handlerEntrar = () => {
+      router.push('/entrar'); // Navega para a tela de cadastro
+    };
+  
+
   return (
+
     <View style={styles.container}>
+      
       {/* Elemento Superior */}
       <View style={styles.headerContainer}>
         <Image 
@@ -59,15 +70,15 @@ const cadastrar = () => {
           activeOutlineColor="transparent"
         />
 
-        <Link asChild href="/entrar">
           <Button 
-            mode="outlined" 
+            mode="outlined"
+            contentStyle={styles.btnTamanho}
             style={styles.btnCadastrarSe} 
             labelStyle={styles.btnText}
+            onPress={handlerEntrar}
           >
             Cadastrar
           </Button>
-        </Link>
       </View>
 
       {/* Elemento Inferior */}
@@ -98,6 +109,7 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     transform: [{ rotate: '90deg' }],
+    opacity: 0.5,
   },
 
   // Conteúdo central
@@ -113,7 +125,7 @@ const styles = StyleSheet.create({
   text: {
     margin: 5,
     fontSize: 20,
-    fontFamily: 'Silkscreen-Bold',
+    fontFamily: 'Roboto-Bold',
     color: '#FFFFFF', // Texto branco para contraste
   },
 
@@ -122,7 +134,7 @@ const styles = StyleSheet.create({
     color: '#FFFFF' ,
     margin: 5,
     width: 325,
-    fontFamily: 'Silkscreen-Regular', // Fonte personalizada
+    fontFamily: 'Roboto-Regular', // Fonte personalizada
     borderColor: '#92C7A3',
     borderWidth: 1,
     paddingHorizontal: 10,
@@ -136,8 +148,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  btnTamanho: {
+    justifyContent: 'center', // Garantir que o conteúdo do botão seja centralizado
+    alignItems: 'center', // Garantir que o conteúdo do botão esteja centralizado
+    height: 50, // Ajuste da altura do botão
+  },
+
   btnText: {
-    fontFamily: 'Silkscreen-Regular', // Fonte personalizada aplicada ao botão
+    fontFamily: 'Roboto-Regular', // Fonte personalizada aplicada ao botão
     fontSize: 14,
     color: '#FFFFFF', // Texto branco para contraste
   },
@@ -152,5 +170,6 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     transform: [{ rotate: '-90deg' }],
+    opacity: 0.5,
   },
 });
