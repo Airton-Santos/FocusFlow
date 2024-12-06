@@ -4,7 +4,11 @@ import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
 
 const goToConfig = () => {
-  router.push('/config'); // Navega para a tela de configurações
+  router.navigate('/config'); // Navega para a tela de configurações
+};
+
+const goToAddTask = () => {
+  router.navigate('/addTarefas'); // Navega para a tela de adicionar tarefa
 };
 
 const Home = () => {
@@ -13,10 +17,6 @@ const Home = () => {
     { id: '2', title: 'Tarefa 2' },
     { id: '3', title: 'Tarefa 3' },
   ]);
-
-  const removeTask = (id) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-  };
 
   return (
     <View style={styles.container}>
@@ -57,7 +57,7 @@ const Home = () => {
         <Button style={styles.navButton}>
           <Image style={styles.icon} source={require('../assets/Elements/alarme.png')} />
         </Button>
-        <Button style={styles.navButton}>
+        <Button style={styles.navButton} onPress={goToAddTask}>
           <Image style={styles.icon} source={require('../assets/Elements/mais.png')} />
         </Button>
         {/* Botão de Configurações */}

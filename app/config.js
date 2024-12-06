@@ -6,30 +6,25 @@ import auth from '../firebaseConfig';
 import { router } from 'expo-router';
 
 const Settings = () => {
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [userName, setUserName] = useState('NOME DE USUÁRIO');
-
-  // Handlers
-  const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
-  const toggleNotifications = () => setNotificationsEnabled(!notificationsEnabled);
+  const [isDarkTheme, setIsDarkTheme] = useState(false); // Tema Escuro
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true); // Notificações
 
   const handlerLogoff = () => {
     signOut(auth).then(() => {
       router.replace('/main'); // Redireciona para a tela principal após deslogar
       console.log('Deslogado com sucesso');
     }).catch((error) => {
-      // Lidar com erros de logout
       console.error(error);
     });
   };
 
   return (
-    <View style={[styles.container, isDarkTheme && styles.darkBackground]}>
+    <View style={styles.container}>
 
       {/* Perfil de Usuário */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Perfil de Usuário</Text>
+        <Text style={styles.sectionTitle}>Configurações</Text>
         <View style={styles.profileContainer}>
           <Image
             style={styles.profileImage}
@@ -40,37 +35,34 @@ const Settings = () => {
             value={userName}
             onChangeText={(text) => setUserName(text)}
             placeholder="Nome"
-            placeholderTextColor={isDarkTheme ? '#FFF' : '#000'}
           />
         </View>
       </View>
 
       <Divider style={styles.divider} />
 
-      {/* Notificações */}
+      {/* Tema Escuro */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Notificações</Text>
-        <Switch
-          value={notificationsEnabled}
-          onValueChange={toggleNotifications}
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={notificationsEnabled ? '#f5dd4b' : '#f4f3f4'}
-        />
-        <Text style={styles.switchLabel}>Ativar Notificações</Text>
-      </View>
-
-      <Divider style={styles.divider} />
-
-      {/* Aparência */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Aparência</Text>
         <View style={styles.row}>
           <Text style={styles.text}>Tema Escuro</Text>
           <Switch
             value={isDarkTheme}
-            onValueChange={toggleTheme}
+            onValueChange={() => setIsDarkTheme(!isDarkTheme)}
             trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={isDarkTheme ? '#f5dd4b' : '#f4f3f4'}
+            thumbColor={isDarkTheme ? '#92C7A3' : '#f4f3f4'}
+          />
+        </View>
+      </View>
+
+      {/* Notificações */}
+      <View style={styles.section}>
+        <View style={styles.row}>
+          <Text style={styles.text}>Notificações</Text>
+          <Switch
+            value={notificationsEnabled}
+            onValueChange={() => setNotificationsEnabled(!notificationsEnabled)}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+            thumbColor={notificationsEnabled ? '#92C7A3' : '#f4f3f4'}
           />
         </View>
       </View>
@@ -98,9 +90,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#FFF',
-  },
-  darkBackground: {
     backgroundColor: '#2D2D29',
   },
   section: {
@@ -110,7 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#FFF',
   },
   profileContainer: {
     flexDirection: 'row',
@@ -128,21 +117,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    color: '#333',
+    color: '#FFF',
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  switchLabel: {
-    fontSize: 16,
-    color: '#333',
+    alignItems: 'center', // Ajustado para garantir que o switch fique alinhado com o texto
+    justifyContent: 'space-between'
   },
   text: {
     fontSize: 16,
-    color: '#333',
+    color: '#FFF',
   },
   divider: {
     marginVertical: 10,
