@@ -1,9 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import auth from '../firebaseConfig';
 
 const Entrar = () => {
+  const [email, setEmail] = useState(''); // Estado para o e-mail
+  const [senha, setSenha] = useState(''); // Estado para a senha
+  const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro
+  const [sucesso, setSucesso] = useState(''); // Estado para armazenar mensagem de sucesso
+  const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
+  const router = useRouter(); // Hook para navegação
+
+  // Função para fazer o login com email e senha
+  const handlerlogin = () => {
+    setErro(''); // Limpa o erro anterior
+    setSucesso(''); // Limpa a mensagem de sucesso anterior
+    setLoginIcon(true); // Ativa o carregamento no botão
+
+    signInWithEmailAndPassword(auth, email, senha)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log('Logado com sucesso');
+        console.log(user.uid);
+
+        // Definir mensagem de sucesso
+        setSucesso('Login realizado com sucesso!');
+
+        // Após o login bem-sucedido, redireciona para a página home
+        router.replace('/home');
+        setLoginIcon(false); // Desativa o carregamento no botão
+      })
+      .catch((error) => {
+        setLoginIcon(false); // Desativa o carregamento no botão em caso de erro
+        setErro('Ocorreu um erro ao tentar fazer o login. Tente novamente.');
+      });
+  };
+
   return (
     <View style={styles.container}>
       {/* Elemento Superior */}
@@ -25,33 +59,51 @@ const Entrar = () => {
         <TextInput
           style={styles.input}
           mode="outlined"
+          cursorColor="#fff"
           placeholder="E-mail"
-          textColor='#fff'
-          placeholderTextColor="#A3B4B4" // Placeholder destacado
+          textColor="#fff"
+          placeholderTextColor="#A3B4B4"
           underlineColor="transparent"
-          activeOutlineColor="transparent" 
+          activeOutlineColor="transparent"
+          value={email} // Ligando o valor do input com o estado
+          onChangeText={setEmail} // Atualizando o estado quando o texto mudar
         />
 
         <TextInput
           style={styles.input}
           mode="outlined"
-          textColor='#fff'
+          cursorColor="#fff"
+          textColor="#fff"
           placeholder="Senha"
-          placeholderTextColor="#A3B4B4" // Placeholder destacado
+          placeholderTextColor="#A3B4B4"
           secureTextEntry
           underlineColor="transparent"
-          activeOutlineColor="transparent" 
+          activeOutlineColor="transparent"
+          value={senha} // Ligando o valor do input com o estado
+          onChangeText={setSenha} // Atualizando o estado quando o texto mudar
         />
 
-        <Link asChild href="/entrar">
-          <Button
-            mode="outlined"
-            style={styles.btnEntrar}
-            labelStyle={styles.btnText} // Fonte personalizada para o botão
-          >
-            Entrar
-          </Button>
-        </Link>
+        {/* Exibindo o erro se houver */}
+        {erro !== '' && (
+          <Text style={styles.errorText}>{erro}</Text>
+        )}
+
+        {/* Exibindo a mensagem de sucesso se houver */}
+        {sucesso !== '' && (
+          <Text style={styles.successText}>{sucesso}</Text>
+        )}
+
+        {/* Botão de Login */}
+        <Button
+          mode="outlined"
+          style={styles.btnEntrar}
+          labelStyle={styles.btnText}
+          onPress={handlerlogin}
+          loading={loginIcon} // Controle de carregamento no botão
+          contentStyle={styles.btnTamanho}
+        >
+          Entrar
+        </Button>
       </View>
 
       {/* Elemento Inferior */}
@@ -73,7 +125,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#2D2D29',
   },
 
-  // Elemento superior
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -85,7 +136,6 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-180deg' }],
   },
 
-  // Conteúdo central
   content: {
     alignItems: 'center',
   },
@@ -98,18 +148,18 @@ const styles = StyleSheet.create({
   text: {
     margin: 10,
     fontSize: 30,
-    fontFamily: 'Silkscreen-Bold', // Fonte personalizada
-    color: '#FFFFFF', // Texto branco para contraste
+    fontFamily: 'Silkscreen-Bold',
+    color: '#FFFFFF',
   },
 
   input: {
     backgroundColor: 'transparent',
     margin: 10,
     width: 325,
-    fontFamily: 'Silkscreen-Regular', // Fonte personalizada
-    borderColor: '#92C7A3', // Cor da borda
+    fontFamily: 'Silkscreen-Regular',
+    borderColor: '#92C7A3',
     borderWidth: 1,
-    color: '#FFFFFF', // Texto digitado em branco
+    color: '#FFFFFF',
     paddingHorizontal: 10,
   },
 
@@ -121,13 +171,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  btnText: {
-    fontFamily: 'Silkscreen-Regular', // Fonte personalizada aplicada ao botão
-    fontSize: 14,
-    color: '#FFFFFF', // Texto branco para contraste
+  btnTamanho: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
   },
 
-  // Elemento inferior
+  btnText: {
+    fontFamily: 'Silkscreen-Regular',
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
+
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -136,6 +191,21 @@ const styles = StyleSheet.create({
   ElementWaterBottom: {
     width: 210,
     height: 215,
-    transform: [{ rotate: '0deg' }], // Orientação original
+    transform: [{ rotate: '0deg' }],
+  },
+
+  // Estilo para o texto de erro
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 10,
+  },
+
+  // Estilo para o texto de sucesso
+  successText: {
+    color: 'green',
+    fontSize: 14,
+    marginTop: 10,
+    fontWeight: 'bold',
   },
 });
