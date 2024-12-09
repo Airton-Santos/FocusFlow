@@ -11,7 +11,7 @@ const goToAddTask = () => {
   router.navigate('/addTarefas'); // Navega para a tela de adicionar tarefa
 };
 
-const Home = () => {
+const home = () => {
   const [tasks, setTasks] = useState([
     { id: '1', title: 'Tarefa 1' },
     { id: '2', title: 'Tarefa 2' },
@@ -54,47 +54,26 @@ const Home = () => {
 
       {/* Navegação */}
       <View style={styles.navigation}>
-<<<<<<< HEAD
-        <Button>
-          <Image
-            style={styles.medalhaPNG}
-            source={require('../assets/Elements/Lembretes.png')}
-          />
+        <Button onPress={goToConfig} style={styles.navButton}>
+          <Image style={styles.icon} source={require('../assets/Elements/configuracao.png')} />
         </Button>
-        <Button>
-          <Image
-            style={styles.maisPNG}
-            source={require('../assets/Elements/Mais.png')}
-          />
-        </Button>
-        <Button>
-          <Image
-            style={styles.configPNG}
-            source={require('../assets/Elements/Configuracao.png')}
-          />
-=======
-        <Button style={styles.navButton}>
-          <Image style={styles.icon} source={require('../assets/Elements/alarme.png')} />
-        </Button>
-        <Button style={styles.navButton} onPress={goToAddTask}>
+        <Button onPress={goToAddTask} style={styles.navButton}>
           <Image style={styles.icon} source={require('../assets/Elements/mais.png')} />
         </Button>
-        {/* Botão de Configurações */}
-        <Button style={styles.navButton} onPress={goToConfig}>
-          <Image style={styles.icon} source={require('../assets/Elements/configuracao.png')} />
->>>>>>> 7cf7031fcbc1127e1d97b56da2c8c2f4133b4718
+        <Button style={styles.navButton}>
+          <Image style={styles.icon} source={require('../assets/Elements/alarme.png')} />
         </Button>
       </View>
     </View>
   );
 };
 
-export default Home;
+export default home;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2D2D29', // Cor de fundo mais suave
+    backgroundColor: '#2D2D29',
     alignItems: 'center',
   },
 
@@ -121,7 +100,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#FFF',
     fontSize: 20,
-    fontFamily: 'Silkscreen-Bold', // Fonte mais moderna
+    fontFamily: 'Silkscreen-Bold',
   },
 
   taskSection: {
@@ -144,7 +123,7 @@ const styles = StyleSheet.create({
 
   taskTitle: {
     fontSize: 22,
-    fontFamily: 'Silkscreen-Bold', 
+    fontFamily: 'Silkscreen-Bold',
     color: '#FFF',
     marginBottom: 10,
     letterSpacing: 1,
@@ -158,42 +137,37 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 15,
     flexDirection: 'row',
-    elevation: 3, // Sombra suave para profundidade
+    elevation: 3,
   },
 
   taskText: {
     fontSize: 18,
     color: '#FFF',
-    fontFamily: 'Silkscreen-Regular', 
+    fontFamily: 'Silkscreen-Regular',
   },
 
   navigation: {
-<<<<<<< HEAD
     height: 90,
     width: '100%',
     backgroundColor: '#215A6D',
+    position: 'absolute',
     bottom: 0,
     justifyContent: 'space-around',
     alignItems: 'center',
     flexDirection: 'row',
   },
 
-  maisPNG: {
-    width: 65,
-    height: 65,
-    backgroundColor: '#FFF',
-    borderRadius: 50,
-    borderColor: '#92C7A3',
-    borderWidth: 1,
+  navButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
-  configPNG: {
-    width: 65,
-    height: 65,
-    backgroundColor: '#FFF',
-    borderRadius: 50,
-    borderColor: '#92C7A3',
-    borderWidth: 1,
+  icon: {
+    width: 45,
+    height: 45,
   },
 
   medalhaPNG: {
@@ -203,29 +177,5 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderColor: '#92C7A3',
     borderWidth: 1,
-=======
-    height: 80, // Ajuste a altura da barra de navegação para algo mais confortável
-    width: '100%',
-    backgroundColor: '#215A6D',
-    borderColor: '#92C7A3',
-    borderWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly', // Distribui os botões igualmente com espaço entre eles
-    alignItems: 'center', // Centraliza os botões verticalmente
-  },
-
-  navButton: {
-    width: 70, // Tamanho fixo para o botão
-    height: 70, // Tamanho fixo para o botão
-    borderRadius: 30, // Tornar os botões redondos
-    justifyContent: 'center', // Centraliza o conteúdo dentro do botão
-    alignItems: 'center', // Centraliza o conteúdo dentro do botão
-    flexDirection: 'row',
-  },
-
-  icon: {
-    width: 45, // Ajuste o tamanho dos ícones
-    height: 45, // Ajuste o tamanho dos ícones
->>>>>>> 7cf7031fcbc1127e1d97b56da2c8c2f4133b4718
   },
 });

@@ -33,7 +33,6 @@ const Entrar = () => {
       router.replace('/home');
     } catch (error) {
       // Caso ocorra algum erro, exibe a mensagem de erro
-      console.error(error);
       setErro('Ocorreu um erro ao tentar fazer o login. Tente novamente.');
     } finally {
       // Desativa o carregamento no botão, independentemente do sucesso ou falha

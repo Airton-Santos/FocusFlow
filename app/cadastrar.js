@@ -30,32 +30,32 @@ const Cadastrar = () => {
     setErro(''); // Limpa mensagens de erro anteriores
     setLoginIcon(true); // Ativa o carregamento no botão
 
-    // Verifica se o e-mail já está cadastrado
-    const emailExistente = await verificarEmail(email);
+    try {
+      // Verifica se o e-mail já está cadastrado
+      const emailExistente = await verificarEmail(email);
 
-    if (emailExistente) {
-      setErro('Este e-mail já está cadastrado. Tente outro.');
+      if (emailExistente) {
+        setErro('Este e-mail já está cadastrado. Tente outro.');
+        setLoginIcon(false); // Desativa o carregamento no botão
+        return; // Impede a continuação do processo de cadastro
+      }
+
+      // Cria o usuário se o e-mail não estiver cadastrado
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      // Usuário cadastrado com sucesso
+      const user = userCredential.user;
+      console.log('Usuário cadastrado com sucesso:', user.uid);
+
+      // Navega para a tela de login após o cadastro
+      router.navigate('/entrar');
       setLoginIcon(false); // Desativa o carregamento no botão
-      return; // Impede a continuação do processo de cadastro
+
+    } catch (error) {
+      console.error('Erro no processo de cadastro:', error);
+      const errorMessage = 'Ocorreu um erro durante o cadastro. Tente novamente.';
+      setErro(errorMessage); // Exibe a mensagem de erro do Firebase
+      setLoginIcon(false); // Desativa o carregamento no botão
     }
-
-    // Cria o usuário se o e-mail não estiver cadastrado
-    createUserWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        // Usuário cadastrado com sucesso
-        const user = userCredential.user;
-        console.log('Usuário cadastrado com sucesso:', user.uid);
-
-        // Navega para a tela de login após o cadastro
-        router.navigate('/entrar');
-        setLoginIcon(false); // Desativa o carregamento no botão
-      })
-      .catch((error) => {
-
-        const errorMessage = ('Este e-mail já está cadastrado. Tente outro');
-        setErro(errorMessage); // Exibe a mensagem de erro do Firebase
-        setLoginIcon(false); // Desativa o carregamento no botão
-      });
   };
 
   return (
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     margin: 5,
     fontSize: 20,
     fontFamily: 'Roboto-Bold',
-    color: '#FFFFFF', // Texto branco para contraste
+    color: '#FFFFFF',
   },
 
   input: {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     color: '#FFFFF',
     margin: 5,
     width: 325,
-    fontFamily: 'Roboto-Regular', // Fonte personalizada
+    fontFamily: 'Roboto-Regular',
     borderColor: '#92C7A3',
     borderWidth: 1,
     paddingHorizontal: 10,
@@ -194,15 +194,15 @@ const styles = StyleSheet.create({
   },
 
   btnTamanho: {
-    justifyContent: 'center', // Garantir que o conteúdo do botão seja centralizado
-    alignItems: 'center', // Garantir que o conteúdo do botão esteja centralizado
-    height: 50, // Ajuste da altura do botão
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
   },
 
   btnText: {
-    fontFamily: 'Roboto-Regular', // Fonte personalizada aplicada ao botão
+    fontFamily: 'Roboto-Regular',
     fontSize: 14,
-    color: '#FFFFFF', // Texto branco para contraste
+    color: '#FFFFFF',
   },
 
   // Elemento inferior
