@@ -54,6 +54,25 @@ const Home = () => {
 
       {/* Navegação */}
       <View style={styles.navigation}>
+<<<<<<< HEAD
+        <Button>
+          <Image
+            style={styles.medalhaPNG}
+            source={require('../assets/Elements/Lembretes.png')}
+          />
+        </Button>
+        <Button>
+          <Image
+            style={styles.maisPNG}
+            source={require('../assets/Elements/Mais.png')}
+          />
+        </Button>
+        <Button>
+          <Image
+            style={styles.configPNG}
+            source={require('../assets/Elements/Configuracao.png')}
+          />
+=======
         <Button style={styles.navButton}>
           <Image style={styles.icon} source={require('../assets/Elements/alarme.png')} />
         </Button>
@@ -63,6 +82,7 @@ const Home = () => {
         {/* Botão de Configurações */}
         <Button style={styles.navButton} onPress={goToConfig}>
           <Image style={styles.icon} source={require('../assets/Elements/configuracao.png')} />
+>>>>>>> 7cf7031fcbc1127e1d97b56da2c8c2f4133b4718
         </Button>
       </View>
     </View>
@@ -148,6 +168,42 @@ const styles = StyleSheet.create({
   },
 
   navigation: {
+<<<<<<< HEAD
+    height: 90,
+    width: '100%',
+    backgroundColor: '#215A6D',
+    bottom: 0,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+
+  maisPNG: {
+    width: 65,
+    height: 65,
+    backgroundColor: '#FFF',
+    borderRadius: 50,
+    borderColor: '#92C7A3',
+    borderWidth: 1,
+  },
+
+  configPNG: {
+    width: 65,
+    height: 65,
+    backgroundColor: '#FFF',
+    borderRadius: 50,
+    borderColor: '#92C7A3',
+    borderWidth: 1,
+  },
+
+  medalhaPNG: {
+    width: 65,
+    height: 65,
+    backgroundColor: '#FFF',
+    borderRadius: 50,
+    borderColor: '#92C7A3',
+    borderWidth: 1,
+=======
     height: 80, // Ajuste a altura da barra de navegação para algo mais confortável
     width: '100%',
     backgroundColor: '#215A6D',
@@ -170,5 +226,6 @@ const styles = StyleSheet.create({
   icon: {
     width: 45, // Ajuste o tamanho dos ícones
     height: 45, // Ajuste o tamanho dos ícones
+>>>>>>> 7cf7031fcbc1127e1d97b56da2c8c2f4133b4718
   },
 });
