@@ -25,6 +25,10 @@ const Main = () => {
     router.navigate('/entrar'); // Navega para a tela de entrar
   };
 
+  const handleRecuperarSenha = () => {
+    router.navigate('/recuperarSenha') //Navegar para tela de recuperar senha
+  };
+
   return (
     // Envolvendo toda a tela com Animated.View
     <Animated.View style={[styles.main, { opacity: fadeAnim }]}>
@@ -55,6 +59,16 @@ const Main = () => {
         onPress={handleEntrar} // Chamando a função ao pressionar o botão
       >
         Entrar
+      </Button>
+
+      <Button
+        mode="contained"
+        style={styles.btn}
+        labelStyle={styles.btnText}  // Garantindo que o texto está centralizado
+        contentStyle={styles.btnTamanho}  // Estilo da largura do conteúdo
+        onPress={handleRecuperarSenha} // Chamando a função ao pressionar o botão
+      >
+        Recuperar Senha
       </Button>
       
     </Animated.View>

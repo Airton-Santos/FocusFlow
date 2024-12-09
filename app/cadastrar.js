@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'fire
 const Cadastrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
   const [senha, setSenha] = useState(''); // Estado para a senha
-  const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro
+  const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro  
   const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
 
   const router = useRouter(); // Inicializando o roteador

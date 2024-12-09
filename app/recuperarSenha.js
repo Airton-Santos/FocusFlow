@@ -1,43 +1,41 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import auth from '../firebaseConfig';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { useRouter } from 'expo-router';
 
 const Entrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
-  const [senha, setSenha] = useState(''); // Estado para a senha
-  const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro
-  const [sucesso, setSucesso] = useState(''); // Estado para armazenar mensagem de sucesso
-  const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
   const router = useRouter(); // Hook para navegação
 
-  // Função para fazer o login com email e senha
-  const handlerlogin = async () => {
-    setErro(''); // Limpa o erro anterior
-    setSucesso(''); // Limpa a mensagem de sucesso anterior
-    setLoginIcon(true); // Ativa o carregamento no botão
-
+  const handleRecuperar = async () => {
     try {
-      // Tenta realizar o login
-      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-      const user = userCredential.user;
-      console.log('Logado com sucesso');
-      console.log(user.uid);
-
-      // Definir mensagem de sucesso
-      setSucesso('Login realizado com sucesso!');
-
-      // Após o login bem-sucedido, redireciona para a página home
-      router.replace('/home');
+      // Envia o e-mail de redefinição de senha
+      await sendPasswordResetEmail(auth, email);
+      // Alerta de sucesso
+      Alert.alert(
+        'E-mail Enviado',
+        'Um e-mail de redefinição de senha foi enviado para o seu endereço.',
+        [{ text: 'OK', onPress: () => router.replace('/main') }]
+      );
+      console.log("Email enviado com sucesso");
     } catch (error) {
-      // Caso ocorra algum erro, exibe a mensagem de erro
-      console.error(error);
-      setErro('Ocorreu um erro ao tentar fazer o login. Tente novamente.');
-    } finally {
-      // Desativa o carregamento no botão, independentemente do sucesso ou falha
-      setLoginIcon(false);
+      // Verifica o tipo de erro e exibe a mensagem apropriada
+      if (error.code === 'auth/user-not-found') {
+        Alert.alert(
+          'Erro',
+          'Este e-mail não está cadastrado em nosso sistema.',
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert(
+          'Erro',
+          'Ocorreu um erro ao tentar enviar o e-mail. Tente novamente.',
+          [{ text: 'OK' }]
+        );
+      }
+      console.log('Erro ao enviar o email para redefinição de senha');
     }
   };
 
@@ -57,7 +55,8 @@ const Entrar = () => {
           style={styles.logo}
           source={require('../assets/Elements/Logo.png')}
         />
-        <Text style={styles.text}>Entrar</Text>
+        <Text style={styles.title}>Recuperar Senha</Text>
+        <Text style={styles.text}>Enviar um email para redefinição de senha</Text>
 
         <TextInput
           style={styles.input}
@@ -72,40 +71,15 @@ const Entrar = () => {
           onChangeText={setEmail} // Atualizando o estado quando o texto mudar
         />
 
-        <TextInput
-          style={styles.input}
-          mode="outlined"
-          cursorColor="#fff"
-          textColor="#fff"
-          placeholder="Senha"
-          placeholderTextColor="#A3B4B4"
-          secureTextEntry
-          underlineColor="transparent"
-          activeOutlineColor="transparent"
-          value={senha} // Ligando o valor do input com o estado
-          onChangeText={setSenha} // Atualizando o estado quando o texto mudar
-        />
-
-        {/* Exibindo o erro se houver */}
-        {erro !== '' && (
-          <Text style={styles.errorText}>{erro}</Text>
-        )}
-
-        {/* Exibindo a mensagem de sucesso se houver */}
-        {sucesso !== '' && (
-          <Text style={styles.successText}>{sucesso}</Text>
-        )}
-
-        {/* Botão de Login */}
+        {/* Botão Enviar */}
         <Button
           mode="outlined"
           style={styles.btnEntrar}
           labelStyle={styles.btnText}
-          onPress={handlerlogin}
-          loading={loginIcon} // Controle de carregamento no botão
+          onPress={handleRecuperar}
           contentStyle={styles.btnTamanho}
         >
-          Entrar
+          Enviar
         </Button>
       </View>
 
@@ -148,9 +122,16 @@ const styles = StyleSheet.create({
     height: 150,
   },
 
-  text: {
+  title: {
     margin: 10,
     fontSize: 30,
+    fontFamily: 'Silkscreen-Bold',
+    color: '#FFFFFF',
+  },
+
+  text: {
+    margin: 10,
+    fontSize: 15,
     fontFamily: 'Silkscreen-Bold',
     color: '#FFFFFF',
   },
@@ -167,7 +148,7 @@ const styles = StyleSheet.create({
   },
 
   btnEntrar: {
-    margin: 10,
+    margin: 30,
     width: 150,
     height: 50,
     backgroundColor: '#3CA2A2',
@@ -195,20 +176,5 @@ const styles = StyleSheet.create({
     width: 210,
     height: 215,
     transform: [{ rotate: '0deg' }],
-  },
-
-  // Estilo para o texto de erro
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    marginTop: 10,
-  },
-
-  // Estilo para o texto de sucesso
-  successText: {
-    color: 'green',
-    fontSize: 14,
-    marginTop: 10,
-    fontWeight: 'bold',
   },
 });
