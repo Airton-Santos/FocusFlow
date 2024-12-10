@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import auth from '../firebaseConfig';
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Cadastrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
@@ -13,33 +13,12 @@ const Cadastrar = () => {
 
   const router = useRouter(); // Inicializando o roteador
 
-  // Função para verificar se o e-mail já está cadastrado
-  const verificarEmail = async (email) => {
-    try {
-      const methods = await fetchSignInMethodsForEmail(auth, email);
-      // Se o array retornado não estiver vazio, significa que o e-mail já está cadastrado
-      return methods.length > 0;
-    } catch (error) {
-      console.error('Erro ao verificar o e-mail:', error);
-      return false;
-    }
-  };
-
   // Função para registrar o usuário
   const handlerEntrar = async () => {
     setErro(''); // Limpa mensagens de erro anteriores
     setLoginIcon(true); // Ativa o carregamento no botão
 
     try {
-      // Verifica se o e-mail já está cadastrado
-      const emailExistente = await verificarEmail(email);
-
-      if (emailExistente) {
-        setErro('Este e-mail já está cadastrado. Tente outro.');
-        setLoginIcon(false); // Desativa o carregamento no botão
-        return; // Impede a continuação do processo de cadastro
-      }
-
       // Cria o usuário se o e-mail não estiver cadastrado
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       // Usuário cadastrado com sucesso
@@ -51,8 +30,7 @@ const Cadastrar = () => {
       setLoginIcon(false); // Desativa o carregamento no botão
 
     } catch (error) {
-      console.error('Erro no processo de cadastro:', error);
-      const errorMessage = 'Ocorreu um erro durante o cadastro. Tente novamente.';
+      const errorMessage = 'Email já cadastrado. Tente novamente com outro email.';
       setErro(errorMessage); // Exibe a mensagem de erro do Firebase
       setLoginIcon(false); // Desativa o carregamento no botão
     }
