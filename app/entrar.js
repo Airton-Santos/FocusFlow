@@ -23,8 +23,8 @@ const Entrar = () => {
       // Tenta realizar o login
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
-      console.log('Logado com sucesso');
-      console.log(user.uid);
+      const userName = userCredential.user.displayName
+      console.log('Logado com sucesso', user.uid, userName);
 
       // Definir mensagem de sucesso
       setSucesso('Login realizado com sucesso!');

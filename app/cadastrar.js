@@ -3,13 +3,14 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import auth from '../firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 const Cadastrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
   const [senha, setSenha] = useState(''); // Estado para a senha
   const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro  
   const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
+  const [nome, setNome] = useState(''); // Estado para o nome
 
   const router = useRouter(); // Inicializando o roteador
 
@@ -19,19 +20,30 @@ const Cadastrar = () => {
     setLoginIcon(true); // Ativa o carregamento no botão
 
     try {
-      // Cria o usuário se o e-mail não estiver cadastrado
+      // Cria o usuário com o e-mail e senha fornecidos
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-      // Usuário cadastrado com sucesso
-      const user = userCredential.user;
-      console.log('Usuário cadastrado com sucesso:', user.uid);
+      
+      // Atualiza o nome do usuário após a criação
+      await updateProfile(userCredential.user, { displayName: nome });
 
-      // Navega para a tela de login após o cadastro
-      router.navigate('/entrar');
+      const user = userCredential.user;
+      console.log('Usuário cadastrado com sucesso:', user.uid, userCredential.user.displayName);
+
+      // Navega para a tela de home após o cadastro
+      router.replace('/home');
       setLoginIcon(false); // Desativa o carregamento no botão
 
-    } catch (error) {
-      const errorMessage = 'Email já cadastrado. Tente novamente com outro email.';
-      setErro(errorMessage); // Exibe a mensagem de erro do Firebase
+    } catch (error) { 
+      // Tratamento detalhado de erros
+      if (error.code === 'auth/email-already-in-use') {
+        setErro('Este e-mail já está cadastrado. Tente usar outro e-mail.');
+      } else if (error.code === 'auth/invalid-email') {
+        setErro('O e-mail fornecido é inválido. Por favor, insira um e-mail válido.');
+      } else if (error.code === 'auth/weak-password') {
+        setErro('A senha fornecida é muito fraca. Escolha uma senha mais forte.');
+      } else {
+        setErro('Erro ao cadastrar o usuário. Tente novamente.');
+      }
       setLoginIcon(false); // Desativa o carregamento no botão
     }
   };
@@ -60,6 +72,8 @@ const Cadastrar = () => {
           placeholderTextColor="#A3B4B4" // Placeholder destacado
           underlineColor="transparent"
           activeOutlineColor="transparent"
+          value={nome}
+          onChangeText={setNome}
         />
 
         <TextInput

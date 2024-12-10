@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, ImageBackground, FlatList } from 'react-
 import React, { useState } from 'react';
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
+import auth from '../firebaseConfig';
 
 const goToConfig = () => {
   router.navigate('/config'); // Navega para a tela de configurações
@@ -29,7 +30,7 @@ const home = () => {
       >
         <View style={styles.user}>
           <Image source={require('../assets/Elements/avatar-do-usuario.png')} style={styles.userImage} />
-          <Text style={styles.userName}>NOME</Text>
+          <Text style={styles.userName}> {auth.currentUser.displayName} </Text>
         </View>
       </ImageBackground>
 

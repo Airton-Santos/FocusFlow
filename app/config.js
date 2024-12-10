@@ -1,21 +1,63 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, Switch } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, Alert } from 'react-native';
 import { Button, Divider } from 'react-native-paper';
-import { signOut } from "firebase/auth";
+import { signOut, updateProfile, updateEmail, updatePassword } from "firebase/auth";
 import auth from '../firebaseConfig';
 import { router } from 'expo-router';
 
 const Settings = () => {
-  const [userName, setUserName] = useState('NOME DE USUÁRIO');
-  const [isDarkTheme, setIsDarkTheme] = useState(false); // Tema Escuro
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true); // Notificações
+  const [userName, setUserName] = useState(auth.currentUser.displayName);
+  const [email, setEmail] = useState(auth.currentUser.email);
+  const [password, setPassword] = useState('');
+
+  // Função para salvar as configurações
+  const saveSettings = async () => {
+    let errors = [];
+
+    // Atualizando o nome do usuário no Firebase
+    try {
+      if (userName !== auth.currentUser.displayName) {
+        await updateProfile(auth.currentUser, { displayName: userName });
+      }
+    } catch (error) {
+      errors.push("O nome não pôde ser atualizado. Tente novamente.");
+    }
+
+    // Atualizando o email
+    try {
+      if (email !== auth.currentUser.email) {
+        await updateEmail(auth.currentUser, email);
+      }
+    } catch (error) {
+      console.error(error)
+      errors.push("O email não pôde ser atualizado. Tente novamente.");
+    }
+
+    // Atualizando a senha
+    try {
+      if (password) {
+        await updatePassword(auth.currentUser, password);
+      }
+    } catch (error) {
+      errors.push("A senha não pôde ser atualizada. Tente novamente.");
+    }
+
+    // Se não houver erros, avisa sucesso
+    if (errors.length === 0) {
+      Alert.alert("Sucesso", "O nome, email e senha foram atualizados com sucesso.");
+      router.navigate('/home'); // Navega para a tela principal
+    } else {
+      // Exibe os erros específicos de cada campo que falhou
+      Alert.alert("Erro", errors.join('\n'));
+    }
+  };
 
   const handlerLogoff = () => {
     signOut(auth).then(() => {
       router.replace('/main'); // Redireciona para a tela principal após deslogar
       console.log('Deslogado com sucesso');
     }).catch((error) => {
-      console.error(error);
+      Alert.alert("Erro", "Ocorreu um erro ao tentar sair.");
     });
   };
 
@@ -30,45 +72,54 @@ const Settings = () => {
             style={styles.profileImage}
             source={require('../assets/Elements/avatar-do-usuario.png')}
           />
-          <TextInput
-            style={styles.input}
-            value={userName}
-            onChangeText={(text) => setUserName(text)}
-            placeholder="Nome"
-          />
         </View>
       </View>
 
       <Divider style={styles.divider} />
+      <Text style={styles.Title}>Perfil do Usuário</Text>
 
-      {/* Tema Escuro */}
+      {/* Nome */}
       <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={styles.text}>Tema Escuro</Text>
-          <Switch
-            value={isDarkTheme}
-            onValueChange={() => setIsDarkTheme(!isDarkTheme)}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={isDarkTheme ? '#92C7A3' : '#f4f3f4'}
-          />
-        </View>
+        <Text style={styles.sectionTitle}>Nome</Text>
+        <TextInput
+          style={styles.input}
+          value={userName}
+          placeholderTextColor='#FFF'
+          onChangeText={(text) => setUserName(text)}
+          placeholder="Nome"
+        />
       </View>
 
-      {/* Notificações */}
+      {/* Email */}
       <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={styles.text}>Notificações</Text>
-          <Switch
-            value={notificationsEnabled}
-            onValueChange={() => setNotificationsEnabled(!notificationsEnabled)}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={notificationsEnabled ? '#92C7A3' : '#f4f3f4'}
-          />
-        </View>
+        <Text style={styles.sectionTitle}>Email</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          placeholderTextColor='#FFF'
+          onChangeText={(text) => setEmail(text)}
+          placeholder="Email"
+          keyboardType="email-address"
+        />
       </View>
+
+      {/* Senha */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Senha</Text>
+        <TextInput
+          style={styles.input}
+          value={password}
+          placeholderTextColor='#FFF'
+          onChangeText={(text) => setPassword(text)}
+          placeholder="Nova Senha"
+          secureTextEntry
+        />
+      </View>
+
+      <Divider style={styles.divider} />
 
       {/* Botão de salvar configurações */}
-      <Button mode="contained" style={styles.saveButton} onPress={() => router.back()}>
+      <Button mode="contained" style={styles.saveButton} onPress={saveSettings}>
         Salvar Configurações
       </Button>
 
@@ -95,6 +146,14 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
   },
+
+  Title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    color: '#FFF',
+  },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -121,8 +180,8 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center', // Ajustado para garantir que o switch fique alinhado com o texto
-    justifyContent: 'space-between'
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   text: {
     fontSize: 16,
