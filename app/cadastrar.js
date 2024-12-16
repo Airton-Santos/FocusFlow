@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import auth from '../firebaseConfig';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 
 const Cadastrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
@@ -29,8 +29,12 @@ const Cadastrar = () => {
       const user = userCredential.user;
       console.log('Usuário cadastrado com sucesso:', user.uid, userCredential.user.displayName);
 
+      // Envia o e-mail de verificação
+      await sendEmailVerification(user); // Envia o e-mail de verificação para o usuário
+      Alert.alert('Verificação', 'E-mail de verificação enviado. Por favor, verifique sua caixa de entrada.');
+
       // Navega para a tela de home após o cadastro
-      router.replace('/home');
+      router.replace('/main');
       setLoginIcon(false); // Desativa o carregamento no botão
 
     } catch (error) { 

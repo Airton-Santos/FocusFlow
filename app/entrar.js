@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -23,7 +23,17 @@ const Entrar = () => {
       // Tenta realizar o login
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
-      const userName = userCredential.user.displayName
+      console.log(user.emailVerified)
+
+      // Verifica se o e-mail do usuário foi verificado
+      if (!user.emailVerified) {
+        // Se não foi verificado, exibe um alerta e retorna
+        setErro('Por favor, verifique seu e-mail antes de tentar fazer o login.');
+        setLoginIcon(false);
+        return;
+      }
+
+      const userName = user.displayName;
       console.log('Logado com sucesso', user.uid, userName);
 
       // Definir mensagem de sucesso

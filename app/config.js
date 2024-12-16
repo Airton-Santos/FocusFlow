@@ -1,68 +1,84 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, Alert } from 'react-native';
 import { Button, Divider } from 'react-native-paper';
-import { signOut, updateProfile, updateEmail, updatePassword } from "firebase/auth";
+import { signOut, updateProfile, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
 import auth from '../firebaseConfig';
 import { router } from 'expo-router';
+import { MaterialIcons } from 'react-native-vector-icons';
 
 const Settings = () => {
   const [userName, setUserName] = useState(auth.currentUser.displayName);
   const [email, setEmail] = useState(auth.currentUser.email);
   const [password, setPassword] = useState('');
 
-  // Função para salvar as configurações
-  const saveSettings = async () => {
-    let errors = [];
-
-    // Atualizando o nome do usuário no Firebase
+  // Função para salvar o nome
+  const saveName = async () => {
     try {
-      if (userName !== auth.currentUser.displayName) {
-        await updateProfile(auth.currentUser, { displayName: userName });
-      }
+      await updateProfile(auth.currentUser, { displayName: userName });
+      Alert.alert("Sucesso", "Nome atualizado com sucesso.");
     } catch (error) {
-      errors.push("O nome não pôde ser atualizado. Tente novamente.");
-    }
-
-    // Atualizando o email
-    try {
-      if (email !== auth.currentUser.email) {
-        await updateEmail(auth.currentUser, email);
-      }
-    } catch (error) {
-      console.error(error)
-      errors.push("O email não pôde ser atualizado. Tente novamente.");
-    }
-
-    // Atualizando a senha
-    try {
-      if (password) {
-        await updatePassword(auth.currentUser, password);
-      }
-    } catch (error) {
-      errors.push("A senha não pôde ser atualizada. Tente novamente.");
-    }
-
-    // Se não houver erros, avisa sucesso
-    if (errors.length === 0) {
-      Alert.alert("Sucesso", "O nome, email e senha foram atualizados com sucesso.");
-      router.navigate('/home'); // Navega para a tela principal
-    } else {
-      // Exibe os erros específicos de cada campo que falhou
-      Alert.alert("Erro", errors.join('\n'));
+      Alert.alert("Erro", "Não foi possível atualizar o nome.");
     }
   };
 
-  const handlerLogoff = () => {
-    signOut(auth).then(() => {
+  // Função para salvar o email
+  const saveEmail = async () => {
+    try {
+      await verifyBeforeUpdateEmail(auth.currentUser, email);
+      await signOut(auth); // Desloga o usuário após enviar a verificação de e-mail
+      router.replace('/main');
+      console.log('Deslogado com sucesso');
+      Alert.alert("Sucesso", "Verificação de e-mail enviada. Verifique sua caixa de entrada.");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível atualizar o e-mail.");
+    }
+  };
+
+  // Função para salvar a senha
+  const savePassword = async () => {
+    try {
+      if (password) {
+        await updatePassword(auth.currentUser, password);
+        Alert.alert("Sucesso", "Senha atualizada com sucesso.");
+        await signOut(auth); // Desloga o usuário após enviar a verificação de e-mail
+        router.replace('/main');
+        console.log('Deslogado com sucesso');
+      } else {
+        Alert.alert("Erro", "Digite uma nova senha.");
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível atualizar a senha.");
+    }
+  };
+
+  // Função de logoff
+  const handlerLogoff = async () => {
+    try {
+      await signOut(auth);
       router.replace('/main'); // Redireciona para a tela principal após deslogar
       console.log('Deslogado com sucesso');
-    }).catch((error) => {
+    } catch (error) {
       Alert.alert("Erro", "Ocorreu um erro ao tentar sair.");
-    });
+      console.error('Erro ao tentar deslogar:', error); // Loga o erro para depuração
+    }
+  };
+
+  // Função para voltar à tela inicial
+  const goBack = () => {
+    router.replace('/home'); // Redireciona para a tela principal (Home)
   };
 
   return (
     <View style={styles.container}>
+      {/* Botão Voltar para Home */}
+      <Button
+        mode="contained"
+        icon="arrow-left"
+        style={styles.backButton}
+        onPress={goBack}
+      >
+        Voltar para Home
+      </Button>
 
       {/* Perfil de Usuário */}
       <View style={styles.section}>
@@ -88,6 +104,14 @@ const Settings = () => {
           onChangeText={(text) => setUserName(text)}
           placeholder="Nome"
         />
+        <Button
+          mode="contained"
+          icon={<MaterialIcons name="edit" size={20} color="white" />}
+          style={styles.actionButton}
+          onPress={saveName}
+        >
+          Alterar Nome
+        </Button>
       </View>
 
       {/* Email */}
@@ -101,6 +125,14 @@ const Settings = () => {
           placeholder="Email"
           keyboardType="email-address"
         />
+        <Button
+          mode="contained"
+          icon={<MaterialIcons name="edit" size={20} color="white" />}
+          style={styles.actionButton}
+          onPress={saveEmail}
+        >
+          Alterar Email
+        </Button>
       </View>
 
       {/* Senha */}
@@ -114,14 +146,17 @@ const Settings = () => {
           placeholder="Nova Senha"
           secureTextEntry
         />
+        <Button
+          mode="contained"
+          icon={<MaterialIcons name="edit" size={20} color="white" />}
+          style={styles.actionButton}
+          onPress={savePassword}
+        >
+          Alterar Senha
+        </Button>
       </View>
 
       <Divider style={styles.divider} />
-
-      {/* Botão de salvar configurações */}
-      <Button mode="contained" style={styles.saveButton} onPress={saveSettings}>
-        Salvar Configurações
-      </Button>
 
       {/* Botão de Logoff */}
       <Button
@@ -146,14 +181,12 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
   },
-
   Title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 30,
     color: '#FFF',
   },
-
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -178,24 +211,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: '#FFF',
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  text: {
-    fontSize: 16,
-    color: '#FFF',
-  },
-  divider: {
-    marginVertical: 10,
-  },
-  saveButton: {
-    marginTop: 20,
+  actionButton: {
+    marginTop: 10,
     backgroundColor: '#3CA2A2',
   },
   logoffButton: {
     marginTop: 20,
-    backgroundColor: '#FF6347', // Cor de fundo para o botão de logoff (vermelho)
+    backgroundColor: '#FF6347',
+  },
+  backButton: {
+    marginBottom: 20,
+    backgroundColor: 'transparent', 
+    alignSelf: 'flex-start',
+    backgroundColor: '#3CA2A2',
+  },
+  divider: {
+    marginVertical: 10,
   },
 });
