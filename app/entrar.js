@@ -40,7 +40,9 @@ const Entrar = () => {
       setSucesso('Login realizado com sucesso!');
 
       // Após o login bem-sucedido, redireciona para a página home
-      router.replace('/home');
+      router.dismissTo('/main')
+      router.replace('/home')
+
     } catch (error) {
       // Caso ocorra algum erro, exibe a mensagem de erro
       setErro('Ocorreu um erro ao tentar fazer o login. Tente novamente.');
@@ -110,7 +112,7 @@ const Entrar = () => {
           mode="outlined"
           style={styles.btnEntrar}
           labelStyle={styles.btnText}
-          onPress={handlerlogin}
+          onPress={() => handlerlogin()}
           loading={loginIcon} // Controle de carregamento no botão
           contentStyle={styles.btnTamanho}
         >
