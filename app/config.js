@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, Alert } from 'react-native';
 import { Button, Divider } from 'react-native-paper';
 import { signOut, updateProfile, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
-import auth from '../firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { router } from 'expo-router';
 import { MaterialIcons } from 'react-native-vector-icons';
 

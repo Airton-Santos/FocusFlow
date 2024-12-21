@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import auth from '../firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 
 const Cadastrar = () => {

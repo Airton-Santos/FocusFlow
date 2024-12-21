@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import auth from '../firebaseConfig';
+import { auth } from '../firebaseConfig';
 
 const Entrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
@@ -35,9 +35,6 @@ const Entrar = () => {
 
       const userName = user.displayName;
       console.log('Logado com sucesso', user.uid, userName);
-
-      // Definir mensagem de sucesso
-      setSucesso('Login realizado com sucesso!');
 
       // Após o login bem-sucedido, redireciona para a página home
       router.dismissTo('/main')

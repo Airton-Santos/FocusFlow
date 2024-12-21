@@ -2,68 +2,93 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from 'react-native-paper'; // Importa o botão do react-native-paper
 import { router } from 'expo-router';
+import { auth, db } from '../firebaseConfig';
+import { addDoc, collection } from 'firebase/firestore';
 
 const AddTask = () => {
-  // Definindo os estados para título e descrição
-  const [taskTitle, setTaskTitle] = useState(''); // Estado para o título
-  const [taskDescription, setTaskDescription] = useState(''); // Estado para a descrição
+  // Estados para armazenar título e descrição da tarefa
+  const [titulo, setTitulo] = useState(''); // Estado para o título
+  const [descricao, setDescription] = useState(''); // Estado para a descrição
+  const [loading, setLoading] = useState(false); // Estado para indicar carregamento
+  const user = auth.currentUser; // Usuário autenticado
 
-  // Função que lida com o botão OK
-  const handleAddTask = () => {
-    if (taskTitle.trim() && taskDescription.trim()) {
-      router.replace('/home'); // Redireciona para a tela Home
-    } else {
-      alert("Por favor, insira o título e a descrição da tarefa.");
+  // Função para adicionar uma tarefa ao Firestore
+  const handleAddTask = async () => {
+    // Valida se os campos foram preenchidos
+    if (!titulo.trim() || !descricao.trim()) {
+      console.error("Preencha todos os campos antes de adicionar a tarefa.");
+      return;
+    }
+
+    try {
+      setLoading(true); // Ativa o estado de carregamento
+
+      // Adiciona a tarefa à coleção "Tarefas" no Firestore
+      await addDoc(collection(db, "Tarefas"), {
+        titulo: titulo,
+        description: descricao,
+        conclusaoDaTarefa: false, // Define que a tarefa não está concluída
+        idUser: user.uid, // Associa a tarefa ao ID do usuário autenticado
+      });
+
+      router.replace("/home"); // Navega de volta para a tela inicial
+    } catch (error) {
+      // Trata erros de adição ao Firestore
+      console.error("Erro ao adicionar tarefa: ", error.message);
+    } finally {
+      setLoading(false); // Desativa o estado de carregamento
     }
   };
 
-  // Função para voltar para a página inicial
+  // Função para voltar à tela inicial
   const handleGoBack = () => {
-    router.replace('/home'); // Botão para voltar à tela principal
+    router.replace('/home');
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Adicionar Tarefa</Text>
-      
-      {/* Campo para o Título da Tarefa */}
+
+      {/* Campo para o título da tarefa */}
       <TextInput
         style={styles.input}
         placeholder="Título da Tarefa"
-        placeholderTextColor="#FFF"  // Placeholder branco
-        value={taskTitle}
-        onChangeText={setTaskTitle} // Atualiza o título
+        placeholderTextColor="#FFF"
+        value={titulo}
+        onChangeText={setTitulo}
       />
-      
-      {/* Campo para a Descrição da Tarefa */}
+
+      {/* Campo para a descrição da tarefa */}
       <TextInput
         style={[styles.input, styles.textArea]}
         placeholder="Descrição da Tarefa"
-        placeholderTextColor="#FFF"  // Placeholder branco
+        placeholderTextColor="#FFF"
         multiline
-        value={taskDescription}
-        onChangeText={setTaskDescription} // Atualiza a descrição
+        value={descricao}
+        onChangeText={setDescription}
       />
-      
-      {/* Botão OK (do React Native Paper) */}
+
+      {/* Botão OK */}
       <View style={styles.buttonContainer}>
-        <Button 
+        <Button
           contentStyle={styles.btncontent}
-          mode="contained" 
-          onPress={handleAddTask} 
+          mode="contained"
+          onPress={handleAddTask}
           style={styles.button}
+          loading={loading}
         >
           OK
         </Button>
       </View>
-      
-      {/* Botão Voltar (do React Native Paper) */}
+
+      {/* Botão Voltar */}
       <View style={styles.buttonContainer}>
-        <Button 
+        <Button
           contentStyle={styles.btncontent}
-          mode="contained" 
-          onPress={handleGoBack} 
-          style={styles.button}>
+          mode="contained"
+          onPress={handleGoBack}
+          style={styles.button}
+        >
           Voltar
         </Button>
       </View>
@@ -78,20 +103,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2D2D29',  // Cor de fundo escura
+    backgroundColor: '#2D2D29',
     padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#FFF',  // Cor do título branco
+    color: '#FFF',
   },
   input: {
     width: '100%',
     height: 40,
     borderColor: '#ccc',
-    color: '#FFF',  // Cor do texto branco
+    color: '#FFF',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
@@ -99,17 +124,16 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
-    textAlignVertical: 'top',  // Garante que o texto começa no topo
-    color: '#FFF',  // Cor do texto branco
+    textAlignVertical: 'top',
   },
   buttonContainer: {
-    width: '80%',  // Aumenta a largura do botão
-    marginBottom: 15,  // Adiciona o espaçamento entre os botões
+    width: '80%',
+    marginBottom: 15,
   },
   button: {
     backgroundColor: '#3CA2A2',
-    height: 50,  // Aumenta a altura do botão
-    borderRadius: 25,  // Bordas arredondadas
+    height: 50,
+    borderRadius: 25,
   },
   btncontent: {
     height: 50,

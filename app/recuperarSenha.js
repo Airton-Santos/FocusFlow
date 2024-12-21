@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import auth from '../firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 
