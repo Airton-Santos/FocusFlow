@@ -1,64 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ImageBackground, FlatList } from 'react-native';
 import { Button, List } from 'react-native-paper';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { auth, db } from '../firebaseConfig'; // Certifique-se de que `db` está corretamente importado
-import { collection, getDocs, query, where } from 'firebase/firestore';
-
-// Função para navegar para a página de configurações
-const goToConfig = () => {
-  router.replace('/config');
-};
-
-// Função para navegar para a página de adicionar tarefas
-const goToAddTask = () => {
-  router.replace('/addTarefas');
-};
+import { collection, getDocs, query, where, doc } from 'firebase/firestore';
 
 const Home = () => {
-  const [tasks, setTasks] = useState([]); // Estado para armazenar as tarefas carregadas do Firestore
 
-  useEffect(() => {
-    // Função para buscar as tarefas da coleção no Firestore
-    const fetchTasks = async () => {
-      try {
-        // Referência à coleção de tarefas
-        const tasksRef = collection(db, "tarefas");
-        // Consulta para pegar as tarefas do usuário logado
-        const q = query(tasksRef, where("idUser", "==", auth.currentUser.uid));
+  const [tarefas, setTarefas] = useState([]);
+  const user = auth.currentUser;
+  const router = useRouter(); // Inicializando o roteador
 
-        // Obtém os documentos da coleção filtrados pelo idUser
-        const querySnapshot = await getDocs(q);
+    // Função para navegar para a página de configurações
+    const goToConfig = () => {
+      router.replace('/config');
+    };
+  
+    // Função para navegar para a página de adicionar tarefas
+    const goToAddTask = () => {
+      router.replace('/addTarefas');
+    };
 
-        // Mapeia os documentos retornados para um array de objetos
-        const allTasks = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+    
+    const verTarefa = async (id) => {
+      router.replace({pathname: '/[verTarefa]', params: {id: id}});
+    }
+    
 
-        // Atualiza o estado com as tarefas carregadas
-        setTasks(allTasks);
-      } catch (error) {
-        console.error("Erro ao buscar tarefas: ", error); // Log de erro, caso ocorra
+    const getAllTarefas = async () => {
+      try{
+        const querySnapshot = await getDocs(query(collection(db, "Tarefas"), where("idUser", "==", user.uid)));
+        let array = querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data() }));
+        setTarefas(array)
+      }
+      catch{
+        console.error(error);
       }
     };
 
-    fetchTasks(); // Chama a função de busca ao carregar o componente
-  }, []);
-
-  // Função para renderizar cada tarefa na FlatList
-  const renderTask = ({ item }) => (
-    <List.Item
-      title={item.titulo} // Título da tarefa
-      description={item.descricao} // Descrição da tarefa
-      right={() => (
-        <List.Icon icon={item.conclusaoDaTarefa ? "check-circle-outline" : "circle-outline"} /> // Ícone com base no status de conclusão
-      )}
-      style={styles.taskItem}
-      titleStyle={{ color: '#FFF' }} // Define a cor do texto como branco
-      descriptionStyle={{ color: '#FFF' }} // Define a cor da descrição como branco
-    />
-  );
+    useEffect(() =>{
+      getAllTarefas();
+    },[]);
+  
+  
+    // Função para renderizar cada tarefa na FlatList
+    const renderTask = ({ item }) => (
+      <List.Item
+        title={item.titulo} // Título da tarefa
+        description={item.description} // Descrição da tarefa
+        right={() => (
+          <List.Icon icon={item.conclusaoDaTarefa ? "check-circle-outline" : "circle-outline"} /> // Ícone com base no status de conclusão
+        )}
+        style={styles.taskItem}
+        titleStyle={{ color: '#FFF' }} // Define a cor do texto como branco
+        descriptionStyle={{ color: '#FFF' }} // Define a cor da descrição como branco
+        onPress={() => verTarefa(item.id)}
+      />
+    );
 
   return (
     <View style={styles.container}>
@@ -82,7 +80,7 @@ const Home = () => {
         >
           <Text style={styles.taskTitle}>Minhas Tarefas</Text>
           <FlatList
-            data={tasks} // Dados das tarefas
+            data={tarefas}
             keyExtractor={(item) => item.id} // Chave única para cada item
             renderItem={renderTask} // Função que renderiza cada item
             ListEmptyComponent={<Text style={styles.emptyMessage}>Nenhuma tarefa encontrada.</Text>} // Mensagem para lista vazia

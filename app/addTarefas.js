@@ -25,8 +25,8 @@ const AddTask = () => {
 
       // Adiciona a tarefa à coleção "Tarefas" no Firestore
       await addDoc(collection(db, "Tarefas"), {
-        titulo: titulo,
-        description: descricao,
+        titulo: titulo, //Define o titulo das tarefas
+        description: descricao, //Define a descrição das tarefas
         conclusaoDaTarefa: false, // Define que a tarefa não está concluída
         idUser: user.uid, // Associa a tarefa ao ID do usuário autenticado
       });
