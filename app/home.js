@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ImageBackground, FlatList } from 'react-native';
 import { Button, List } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import { auth, db } from '../firebaseConfig'; // Certifique-se de que `db` está corretamente importado
-import { collection, getDocs, query, where, doc } from 'firebase/firestore';
+import { auth, db } from '../firebaseConfig';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const Home = () => {
 
@@ -11,52 +11,48 @@ const Home = () => {
   const user = auth.currentUser;
   const router = useRouter(); // Inicializando o roteador
 
-    // Função para navegar para a página de configurações
-    const goToConfig = () => {
-      router.replace('/config');
-    };
+  // Função para navegar para a página de configurações
+  const goToConfig = () => {
+    router.replace('/config');
+  };
   
-    // Função para navegar para a página de adicionar tarefas
-    const goToAddTask = () => {
-      router.replace('/addTarefas');
-    };
+  // Função para navegar para a página de adicionar tarefas
+  const goToAddTask = () => {
+    router.replace('/addTarefas');
+  };
 
-    
-    const verTarefa = async (id) => {
-      router.replace({pathname: '/[verTarefa]', params: {id: id}});
+  const verTarefa = (id) => {
+    router.replace({pathname: '/[id]', params: {id: id}});
+  };
+
+  const getAllTarefas = async () => {
+    try {
+      const querySnapshot = await getDocs(query(collection(db, "Tarefas"), where("idUser", "==", user.uid)));
+      let array = querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data() }));
+      setTarefas(array);
+    } catch (error) {
+      console.error(error);
     }
-    
+  };
 
-    const getAllTarefas = async () => {
-      try{
-        const querySnapshot = await getDocs(query(collection(db, "Tarefas"), where("idUser", "==", user.uid)));
-        let array = querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data() }));
-        setTarefas(array)
-      }
-      catch{
-        console.error(error);
-      }
-    };
+  useEffect(() => {
+    getAllTarefas();
+  }, []);
 
-    useEffect(() =>{
-      getAllTarefas();
-    },[]);
-  
-  
-    // Função para renderizar cada tarefa na FlatList
-    const renderTask = ({ item }) => (
-      <List.Item
-        title={item.titulo} // Título da tarefa
-        description={item.description} // Descrição da tarefa
-        right={() => (
-          <List.Icon icon={item.conclusaoDaTarefa ? "check-circle-outline" : "circle-outline"} /> // Ícone com base no status de conclusão
-        )}
-        style={styles.taskItem}
-        titleStyle={{ color: '#FFF' }} // Define a cor do texto como branco
-        descriptionStyle={{ color: '#FFF' }} // Define a cor da descrição como branco
-        onPress={() => verTarefa(item.id)}
-      />
-    );
+  // Função para renderizar cada tarefa na FlatList
+  const renderTask = ({ item }) => (
+    <List.Item
+      title={item.titulo} // Título da tarefa
+      right={() => (
+        <View style={styles.taskActions}>
+          <List.Icon icon={item.conclusaoDaTarefa ? "check-circle-outline" : "circle-outline"} /> 
+        </View>
+      )}
+      style={styles.taskItem}
+      titleStyle={{ color: '#FFF' }} // Define a cor do texto como branco
+      onPress={() => verTarefa(item.id)}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -113,15 +109,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#2D2D29',
     alignItems: 'center',
   },
+
   backgroundUser: {
     width: '100%',
     height: 220,
     justifyContent: 'center',
   },
+
   user: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   userImage: {
     width: 110,
     height: 110,
@@ -129,17 +128,20 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#FFF',
   },
+
   userName: {
     marginTop: 10,
     color: '#FFF',
     fontSize: 20,
     fontFamily: 'Silkscreen-Bold',
   },
+
   taskSection: {
     flex: 1,
     width: '90%',
     marginTop: 20,
   },
+
   backgroundTarefas: {
     flex: 1,
     borderRadius: 20,
@@ -151,6 +153,7 @@ const styles = StyleSheet.create({
     borderColor: '#92C7A3',
     borderWidth: 2,
   },
+
   taskTitle: {
     fontSize: 22,
     fontFamily: 'Silkscreen-Bold',
@@ -158,17 +161,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     letterSpacing: 1,
   },
+
   taskItem: {
     backgroundColor: '#2D736D',
     borderRadius: 15,
     elevation: 3,
     marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10, // Adicionando padding vertical para controle de altura
   },
+
+  taskActions: {
+    flexDirection: 'row',
+    alignItems: 'center', // Alinha os ícones na mesma linha
+    justifyContent: 'flex-end', // Coloca os ícones na extremidade direita
+  },
+
   emptyMessage: {
     color: '#FFF',
     textAlign: 'center',
     marginTop: 20,
   },
+
   navigation: {
     height: 90,
     width: '100%',
@@ -179,6 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
+
   navButton: {
     width: 70,
     height: 70,
@@ -186,8 +203,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   icon: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
   },
 });
