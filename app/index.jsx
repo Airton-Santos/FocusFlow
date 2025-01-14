@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image, Text, Animated } from 'react-native';
+import { StyleSheet, View, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 
-export default function Index() {
+export default function index() {
   const router = useRouter();
   const fadeAnim = new Animated.Value(0); // Valor inicial para animação de fade
 
