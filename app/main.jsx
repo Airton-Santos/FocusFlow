@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Animated } from 'react-native';
+import { StyleSheet, Text, Animated } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useRouter } from 'expo-router'; // Importando useRouter
 

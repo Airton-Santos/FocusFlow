@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.airtonj.FocusFlow"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,6 +29,14 @@
       "expo-router",
       "expo-font"
     ],
-    "scheme": "your-app-scheme"
+    "scheme": "your-app-scheme",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "21002beb-9c2b-44f8-ace8-bc0d9d52abb1"
+      }
+    }
   }
 }

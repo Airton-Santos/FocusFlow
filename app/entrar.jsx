@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import * as Notification from "expo-notifications"
 
 const Entrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
@@ -12,6 +13,43 @@ const Entrar = () => {
   const [sucesso, setSucesso] = useState(''); // Estado para armazenar mensagem de sucesso
   const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
   const router = useRouter(); // Hook para navegação
+
+  //Notification Handler setup
+  Notification.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false
+    })
+  })
+
+  useEffect(() => {
+    regiseterApp()
+  }, []);
+
+  async function regiseterApp() {
+    const { status } = await Notification.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert("Failed to get notification permission");
+      return;
+    }
+
+    const token = (await Notification.getExpoPushTokenAsync({
+      projectId: "21002beb-9c2b-44f8-ace8-bc0d9d52abb1"
+    })).data;
+
+    console.log(token);
+  }
+
+  async function sendNotification() {
+    await Notification.scheduleNotificationAsync({
+      content: {
+        title: "Login Bem-Sucedido",
+        body: "Você fez login com sucesso!"
+      },
+      trigger: { seconds: 1 }
+    });
+  }
 
   // Função para fazer o login com email e senha
   const handlerlogin = async () => {
@@ -36,9 +74,12 @@ const Entrar = () => {
       const userName = user.displayName;
       console.log('Logado com sucesso', user.uid, userName);
 
+      // Enviar notificação ao fazer login
+      await sendNotification();  // Envia a notificação
+
       // Após o login bem-sucedido, redireciona para a página home
-      router.dismissTo('/main')
-      router.replace('/home')
+      router.dismissTo('/main');
+      router.replace('/home');
 
     } catch (error) {
       // Caso ocorra algum erro, exibe a mensagem de erro
