@@ -14,6 +14,11 @@ const Entrar = () => {
   const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
   const router = useRouter(); // Hook para navegação
 
+  // Estados de foco individuais
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isSenhaFocused, setIsSenhaFocused] = useState(false);
+  
+
   //Notification Handler setup
   Notification.setNotificationHandler({
     handleNotification: async () => ({
@@ -109,7 +114,11 @@ const Entrar = () => {
         <Text style={styles.text}>Entrar</Text>
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isEmailFocused && { borderColor: '#308282' },
+          ]}
+          outlineColor="transparent"
           mode="outlined"
           cursorColor="#fff"
           placeholder="E-mail"
@@ -119,10 +128,17 @@ const Entrar = () => {
           activeOutlineColor="transparent"
           value={email} // Ligando o valor do input com o estado
           onChangeText={setEmail} // Atualizando o estado quando o texto mudar
+          onFocus={() => setIsEmailFocused(true)}
+          onBlur={() => setIsEmailFocused(false)}
+
         />
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isSenhaFocused && { borderColor: '#308282' },
+          ]}
+          outlineColor="transparent"
           mode="outlined"
           cursorColor="#fff"
           textColor="#fff"
@@ -133,6 +149,8 @@ const Entrar = () => {
           activeOutlineColor="transparent"
           value={senha} // Ligando o valor do input com o estado
           onChangeText={setSenha} // Atualizando o estado quando o texto mudar
+          onFocus={() => setIsSenhaFocused(true)}
+          onBlur={() => setIsSenhaFocused(false)}
         />
 
         {/* Exibindo o erro se houver */}
@@ -219,7 +237,7 @@ const styles = StyleSheet.create({
     margin: 10,
     width: 150,
     height: 50,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#215A6D',
     justifyContent: 'center',
   },
 

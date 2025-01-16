@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 
   btn: {
     borderRadius: 8,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#215A6D',
     margin: 10,
     width: '70%', // Ajustando a largura do botão
   },

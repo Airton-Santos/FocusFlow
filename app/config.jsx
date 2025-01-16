@@ -213,17 +213,17 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     marginTop: 10,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#215A6D',
   },
   logoffButton: {
     marginTop: 20,
-    backgroundColor: '#FF6347',
+    backgroundColor: '#AF1414',
   },
   backButton: {
     marginBottom: 20,
     backgroundColor: 'transparent', 
     alignSelf: 'flex-start',
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#215A6D',
   },
   divider: {
     marginVertical: 10,

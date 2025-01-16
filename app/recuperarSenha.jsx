@@ -9,6 +9,9 @@ const Entrar = () => {
   const [email, setEmail] = useState(''); // Estado para o e-mail
   const router = useRouter(); // Hook para navegação
 
+  //Estado de focus Individuais
+  const [isSenhaFocused, setIsSenhaFocused] = useState(false);
+
   const handleRecuperar = async () => {
     try {
       // Envia o e-mail de redefinição de senha
@@ -59,7 +62,11 @@ const Entrar = () => {
         <Text style={styles.text}>Enviar um email para redefinição de senha</Text>
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isSenhaFocused && { borderColor: '#308282' },
+          ]}
+          outlineColor='transparent'
           mode="outlined"
           cursorColor="#fff"
           placeholder="E-mail"
@@ -69,6 +76,8 @@ const Entrar = () => {
           activeOutlineColor="transparent"
           value={email} // Ligando o valor do input com o estado
           onChangeText={setEmail} // Atualizando o estado quando o texto mudar
+          onFocus={() => setIsSenhaFocused(true)}
+          onBlur={() => setIsSenhaFocused(false)}
         />
 
         {/* Botão Enviar */}
@@ -151,7 +160,7 @@ const styles = StyleSheet.create({
     margin: 30,
     width: 150,
     height: 50,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#215A6D',
     justifyContent: 'center',
   },
 

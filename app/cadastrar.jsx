@@ -6,39 +6,35 @@ import { auth } from '../firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 
 const Cadastrar = () => {
-  const [email, setEmail] = useState(''); // Estado para o e-mail
-  const [senha, setSenha] = useState(''); // Estado para a senha
-  const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro  
-  const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
-  const [nome, setNome] = useState(''); // Estado para o nome
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [nome, setNome] = useState('');
+  const [erro, setErro] = useState('');
+  const [loginIcon, setLoginIcon] = useState(false);
 
-  const router = useRouter(); // Inicializando o roteador
+  // Estados de foco individuais
+  const [isNomeFocused, setIsNomeFocused] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isSenhaFocused, setIsSenhaFocused] = useState(false);
 
-  // Função para registrar o usuário
+  const router = useRouter();
+
   const handlerEntrar = async () => {
-    setErro(''); // Limpa mensagens de erro anteriores
-    setLoginIcon(true); // Ativa o carregamento no botão
+    setErro('');
+    setLoginIcon(true);
 
     try {
-      // Cria o usuário com o e-mail e senha fornecidos
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-      
-      // Atualiza o nome do usuário após a criação
       await updateProfile(userCredential.user, { displayName: nome });
-
       const user = userCredential.user;
-      console.log('Usuário cadastrado com sucesso:', user.uid, userCredential.user.displayName);
 
-      // Envia o e-mail de verificação
-      await sendEmailVerification(user); // Envia o e-mail de verificação para o usuário
+      console.log('Usuário cadastrado com sucesso:', user.uid, user.displayName);
+      await sendEmailVerification(user);
+
       Alert.alert('Verificação', 'E-mail de verificação enviado. Por favor, verifique sua caixa de entrada.');
-
-      // Navega para a tela de home após o cadastro
       router.replace('/main');
-      setLoginIcon(false); // Desativa o carregamento no botão
-
-    } catch (error) { 
-      // Tratamento detalhado de erros
+      setLoginIcon(false);
+    } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         setErro('Este e-mail já está cadastrado. Tente usar outro e-mail.');
       } else if (error.code === 'auth/invalid-email') {
@@ -48,66 +44,82 @@ const Cadastrar = () => {
       } else {
         setErro('Erro ao cadastrar o usuário. Tente novamente.');
       }
-      setLoginIcon(false); // Desativa o carregamento no botão
+      setLoginIcon(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Elemento Superior */}
       <View style={styles.headerContainer}>
-        <Image
-          style={styles.ElementWaterTop}
-          source={require('../assets/Elements/ElementWater.png')}
-        />
+        <Image style={styles.ElementWaterTop} source={require('../assets/Elements/ElementWater.png')} />
       </View>
 
-      {/* Conteúdo Central */}
       <View style={styles.content}>
         <Image style={styles.logo} source={require('../assets/Elements/Logo.png')} />
         <Text style={styles.text}>Cadastre-se</Text>
 
+        {/* Nome */}
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isNomeFocused && { borderColor: '#308282' },
+          ]}
+          outlineColor="transparent"
           mode="outlined"
           cursorColor="#fff"
           textColor="#fff"
           placeholder="Nome"
-          placeholderTextColor="#A3B4B4" // Placeholder destacado
+          placeholderTextColor="#A3B4B4"
           underlineColor="transparent"
           activeOutlineColor="transparent"
           value={nome}
           onChangeText={setNome}
+          onFocus={() => setIsNomeFocused(true)}
+          onBlur={() => setIsNomeFocused(false)}
         />
 
+        {/* Email */}
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isEmailFocused && { borderColor: '#308282' },
+          ]}
+          outlineColor="transparent"
           mode="outlined"
-          textColor="#fff"
           cursorColor="#fff"
+          textColor="#fff"
           placeholder="E-mail"
-          placeholderTextColor="#A3B4B4" // Placeholder destacado
+          placeholderTextColor="#A3B4B4"
           underlineColor="transparent"
           activeOutlineColor="transparent"
-          value={email} // Ligando o valor do input com o estado
-          onChangeText={setEmail} // Atualizando o estado quando o texto mudar
+          value={email}
+          onChangeText={setEmail}
+          onFocus={() => setIsEmailFocused(true)}
+          onBlur={() => setIsEmailFocused(false)}
         />
 
+        {/* Senha */}
         <TextInput
-          style={styles.input}
-          textColor="#fff"
+          style={[
+            styles.input,
+            isSenhaFocused && { borderColor: '#308282' },
+          ]}
+          outlineColor="transparent"
           mode="outlined"
           cursorColor="#fff"
+          textColor="#fff"
           placeholder="Senha"
-          placeholderTextColor="#A3B4B4" // Placeholder destacado
+          placeholderTextColor="#A3B4B4"
           secureTextEntry
           underlineColor="transparent"
           activeOutlineColor="transparent"
-          value={senha} // Ligando o valor do input com o estado
-          onChangeText={setSenha} // Atualizando o estado quando o texto mudar
+          value={senha}
+          onChangeText={setSenha}
+          onFocus={() => setIsSenhaFocused(true)}
+          onBlur={() => setIsSenhaFocused(false)}
         />
 
-        {/* Exibe a mensagem de erro, se houver */}
+        {/* Exibe o erro */}
         {erro !== '' && <Text style={styles.errorText}>{erro}</Text>}
 
         <Button
@@ -116,18 +128,14 @@ const Cadastrar = () => {
           style={styles.btnCadastrarSe}
           labelStyle={styles.btnText}
           onPress={handlerEntrar}
-          loading={loginIcon} // Controle de carregamento no botão
+          loading={loginIcon}
         >
           Cadastrar
         </Button>
       </View>
 
-      {/* Elemento Inferior */}
       <View style={styles.footerContainer}>
-        <Image
-          style={styles.ElementWaterBottom}
-          source={require('../assets/Elements/ElementWater.png')}
-        />
+        <Image style={styles.ElementWaterBottom} source={require('../assets/Elements/ElementWater.png')} />
       </View>
     </View>
   );
@@ -140,36 +148,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2D2D29',
   },
-
-  // Elemento superior
   headerContainer: {
     justifyContent: 'flex-end',
   },
-
   ElementWaterTop: {
     width: 210,
     height: 210,
     transform: [{ rotate: '90deg' }],
     opacity: 0.5,
   },
-
-  // Conteúdo central
   content: {
     alignItems: 'center',
   },
-
   logo: {
     width: 150,
     height: 150,
   },
-
   text: {
     margin: 5,
     fontSize: 20,
     fontFamily: 'Roboto-Bold',
     color: '#FFFFFF',
   },
-
   input: {
     backgroundColor: 'transparent',
     color: '#FFFFF',
@@ -180,41 +180,33 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
   },
-
   btnCadastrarSe: {
     margin: 5,
     width: 150,
     height: 50,
-    backgroundColor: '#3CA2A2',
+    backgroundColor: '#215A6D',
     justifyContent: 'center',
   },
-
   btnTamanho: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
   },
-
   btnText: {
     fontFamily: 'Roboto-Regular',
     fontSize: 14,
     color: '#FFFFFF',
   },
-
-  // Elemento inferior
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
-
   ElementWaterBottom: {
     width: 210,
     height: 210,
     transform: [{ rotate: '-90deg' }],
     opacity: 0.5,
   },
-
-  // Estilo para o texto de erro
   errorText: {
     color: 'red',
     fontSize: 14,

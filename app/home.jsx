@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
 
   taskItem: {
-    backgroundColor: '#2D736D',
+    backgroundColor: '#308282',
     borderRadius: 15,
     elevation: 3,
     marginBottom: 10,
@@ -197,15 +197,15 @@ const styles = StyleSheet.create({
   },
 
   navButton: {
-    width: 70,
-    height: 70,
+    width: 100,
+    height: 100,
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   icon: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
   },
 });
