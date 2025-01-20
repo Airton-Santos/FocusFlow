@@ -1,96 +1,87 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import * as Notification from "expo-notifications"
+import * as Notification from 'expo-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importando AsyncStorage
 
 const Entrar = () => {
-  const [email, setEmail] = useState(''); // Estado para o e-mail
-  const [senha, setSenha] = useState(''); // Estado para a senha
-  const [erro, setErro] = useState(''); // Estado para armazenar mensagens de erro
-  const [sucesso, setSucesso] = useState(''); // Estado para armazenar mensagem de sucesso
-  const [loginIcon, setLoginIcon] = useState(false); // Estado para o carregamento do botão
-  const router = useRouter(); // Hook para navegação
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState('');
+  const [loginIcon, setLoginIcon] = useState(false);
+  const router = useRouter();
 
-  // Estados de foco individuais
+  // Estados de foco para os campos de entrada
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isSenhaFocused, setIsSenhaFocused] = useState(false);
-  
 
-  //Notification Handler setup
+  // Notification Handler setup
   Notification.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
       shouldPlaySound: true,
-      shouldSetBadge: false
-    })
-  })
+      shouldSetBadge: false,
+    }),
+  });
 
   useEffect(() => {
-    regiseterApp()
+    regiseterApp();
   }, []);
 
+  // Função para pedir permissão e pegar o token de push
   async function regiseterApp() {
     const { status } = await Notification.requestPermissionsAsync();
     if (status !== 'granted') {
-      alert("Failed to get notification permission");
+      alert('Falha ao obter permissão de notificação');
       return;
     }
 
-    const token = (await Notification.getExpoPushTokenAsync({
-      projectId: "21002beb-9c2b-44f8-ace8-bc0d9d52abb1"
-    })).data;
+    const token = (await Notification.getExpoPushTokenAsync()).data;
+    console.log('Token de notificação gerado:', token);
 
-    console.log(token);
+    // Armazenando o token de notificação no AsyncStorage
+    await AsyncStorage.setItem('pushToken', token);
   }
 
+  // Função para enviar uma notificação de login bem-sucedido
   async function sendNotification() {
     await Notification.scheduleNotificationAsync({
       content: {
-        title: "Login Bem-Sucedido",
-        body: "Você fez login com sucesso!"
+        title: 'Login Bem-Sucedido',
+        body: 'Você fez login com sucesso!',
       },
-      trigger: { seconds: 1 }
+      trigger: { seconds: 1 },
     });
   }
 
-  // Função para fazer o login com email e senha
+  // Função para realizar o login
   const handlerlogin = async () => {
-    setErro(''); // Limpa o erro anterior
-    setSucesso(''); // Limpa a mensagem de sucesso anterior
-    setLoginIcon(true); // Ativa o carregamento no botão
+    setErro('');
+    setLoginIcon(true);
 
     try {
-      // Tenta realizar o login
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
-      console.log(user.emailVerified)
 
-      // Verifica se o e-mail do usuário foi verificado
       if (!user.emailVerified) {
-        // Se não foi verificado, exibe um alerta e retorna
         setErro('Por favor, verifique seu e-mail antes de tentar fazer o login.');
         setLoginIcon(false);
         return;
       }
 
-      const userName = user.displayName;
-      console.log('Logado com sucesso', user.uid, userName);
+      console.log('Logado com sucesso', user.uid);
 
-      // Enviar notificação ao fazer login
-      await sendNotification();  // Envia a notificação
+      // Enviar a notificação de login bem-sucedido
+      await sendNotification();
 
       // Após o login bem-sucedido, redireciona para a página home
-      router.dismissTo('/main');
       router.replace('/home');
-
     } catch (error) {
-      // Caso ocorra algum erro, exibe a mensagem de erro
       setErro('Ocorreu um erro ao tentar fazer o login. Tente novamente.');
     } finally {
-      // Desativa o carregamento no botão, independentemente do sucesso ou falha
       setLoginIcon(false);
     }
   };
@@ -126,11 +117,10 @@ const Entrar = () => {
           placeholderTextColor="#A3B4B4"
           underlineColor="transparent"
           activeOutlineColor="transparent"
-          value={email} // Ligando o valor do input com o estado
-          onChangeText={setEmail} // Atualizando o estado quando o texto mudar
+          value={email}
+          onChangeText={setEmail}
           onFocus={() => setIsEmailFocused(true)}
           onBlur={() => setIsEmailFocused(false)}
-
         />
 
         <TextInput
@@ -147,29 +137,22 @@ const Entrar = () => {
           secureTextEntry
           underlineColor="transparent"
           activeOutlineColor="transparent"
-          value={senha} // Ligando o valor do input com o estado
-          onChangeText={setSenha} // Atualizando o estado quando o texto mudar
+          value={senha}
+          onChangeText={setSenha}
           onFocus={() => setIsSenhaFocused(true)}
           onBlur={() => setIsSenhaFocused(false)}
         />
 
         {/* Exibindo o erro se houver */}
-        {erro !== '' && (
-          <Text style={styles.errorText}>{erro}</Text>
-        )}
-
-        {/* Exibindo a mensagem de sucesso se houver */}
-        {sucesso !== '' && (
-          <Text style={styles.successText}>{sucesso}</Text>
-        )}
+        {erro !== '' && <Text style={styles.errorText}>{erro}</Text>}
 
         {/* Botão de Login */}
         <Button
           mode="outlined"
           style={styles.btnEntrar}
           labelStyle={styles.btnText}
-          onPress={() => handlerlogin()}
-          loading={loginIcon} // Controle de carregamento no botão
+          onPress={handlerlogin}
+          loading={loginIcon}
           contentStyle={styles.btnTamanho}
         >
           Entrar
@@ -194,34 +177,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2D2D29',
   },
-
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
-
   ElementWaterTop: {
     width: 210,
     height: 210,
     transform: [{ rotate: '-180deg' }],
   },
-
   content: {
     alignItems: 'center',
   },
-
   logo: {
     width: 150,
     height: 150,
   },
-
   text: {
     margin: 10,
     fontSize: 30,
     fontFamily: 'Silkscreen-Bold',
     color: '#FFFFFF',
   },
-
   input: {
     backgroundColor: 'transparent',
     margin: 10,
@@ -232,7 +209,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     paddingHorizontal: 10,
   },
-
   btnEntrar: {
     margin: 10,
     width: 150,
@@ -240,42 +216,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#215A6D',
     justifyContent: 'center',
   },
-
   btnTamanho: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
   },
-
   btnText: {
     fontFamily: 'Silkscreen-Regular',
     fontSize: 14,
     color: '#FFFFFF',
   },
-
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
-
   ElementWaterBottom: {
     width: 210,
     height: 215,
     transform: [{ rotate: '0deg' }],
   },
-
-  // Estilo para o texto de erro
   errorText: {
     color: 'red',
     fontSize: 14,
     marginTop: 10,
-  },
-
-  // Estilo para o texto de sucesso
-  successText: {
-    color: 'green',
-    fontSize: 14,
-    marginTop: 10,
-    fontWeight: 'bold',
   },
 });
