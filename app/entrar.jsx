@@ -3,9 +3,9 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth, getDatabase, ref, set } from '../firebaseConfig'; // Adicionado Realtime Database
 import * as Notification from 'expo-notifications';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importando AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Entrar = () => {
   const [email, setEmail] = useState('');
@@ -27,23 +27,33 @@ const Entrar = () => {
     }),
   });
 
-  useEffect(() => {
-    regiseterApp();
-  }, []);
+  // Função para armazenar o token no Realtime Database
+  const storeToken = async (token, userId) => {
+    try {
+      const db = getDatabase();
+      const tokenRef = ref(db, `Tokens/${token}`);
+      await set(tokenRef, {
+        userId: userId,
+        createdAt: new Date().toISOString(),
+      });
+      console.log('Token armazenado no Realtime Database com sucesso!');
+    } catch (error) {
+      console.error('Erro ao salvar token no Realtime Database:', error);
+    }
+  };
 
-  // Função para pedir permissão e pegar o token de push
-  async function regiseterApp() {
+  async function registerApp() {
     const { status } = await Notification.requestPermissionsAsync();
     if (status !== 'granted') {
       alert('Falha ao obter permissão de notificação');
       return;
     }
-
+  
     const token = (await Notification.getExpoPushTokenAsync()).data;
     console.log('Token de notificação gerado:', token);
-
-    // Armazenando o token de notificação no AsyncStorage
-    await AsyncStorage.setItem('pushToken', token);
+  
+    // Salvando o token diretamente no Firestore
+    await storeToken(token);
   }
 
   // Função para enviar uma notificação de login bem-sucedido
@@ -73,6 +83,9 @@ const Entrar = () => {
       }
 
       console.log('Logado com sucesso', user.uid);
+
+      // Registrar o token e armazená-lo no banco
+      await registerApp(user.uid);
 
       // Enviar a notificação de login bem-sucedido
       await sendNotification();
