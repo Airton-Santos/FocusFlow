@@ -7,6 +7,16 @@ import { auth, getDatabase, ref, set } from '../firebaseConfig'; // Adicionado R
 import * as Notification from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+  // Notification Handler setup
+  Notification.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+
 const Entrar = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -18,29 +28,9 @@ const Entrar = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isSenhaFocused, setIsSenhaFocused] = useState(false);
 
-  // Notification Handler setup
-  Notification.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
-
-  // Função para armazenar o token no Realtime Database
-  const storeToken = async (token, userId) => {
-    try {
-      const db = getDatabase();
-      const tokenRef = ref(db, `Tokens/${token}`);
-      await set(tokenRef, {
-        userId: userId,
-        createdAt: new Date().toISOString(),
-      });
-      console.log('Token armazenado no Realtime Database com sucesso!');
-    } catch (error) {
-      console.error('Erro ao salvar token no Realtime Database:', error);
-    }
-  };
+  useEffect(() => {
+    registerApp();
+  }, []);
 
   async function registerApp() {
     const { status } = await Notification.requestPermissionsAsync();
@@ -48,15 +38,8 @@ const Entrar = () => {
       alert('Falha ao obter permissão de notificação');
       return;
     }
-  
-    const token = (await Notification.getExpoPushTokenAsync()).data;
-    console.log('Token de notificação gerado:', token);
-  
-    // Salvando o token diretamente no Firestore
-    await storeToken(token);
+    console.log("Permissão aceita com sucesso")
   }
-
-  // Função para enviar uma notificação de login bem-sucedido
   async function sendNotification() {
     await Notification.scheduleNotificationAsync({
       content: {
@@ -83,9 +66,6 @@ const Entrar = () => {
       }
 
       console.log('Logado com sucesso', user.uid);
-
-      // Registrar o token e armazená-lo no banco
-      await registerApp(user.uid);
 
       // Enviar a notificação de login bem-sucedido
       await sendNotification();

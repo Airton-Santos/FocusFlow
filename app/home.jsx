@@ -1,19 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, Image, ImageBackground, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, ImageBackground, FlatList, Alert } from 'react-native';
 import { Button, List } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { auth, db } from '../firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -66,6 +63,18 @@ const Home = () => {
     />
   );
 
+  const handleCallNotifications = async () => {
+    const { status }  = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert("Você não deixou as notificações ativas");
+
+      return;
+    }
+    const token = await Notifications.getExpoPushTokenAsync();
+
+    console.log("Expo push Token", token);
+  }
+
   return (
     <View style={styles.container}>
       {/* Seção do Usuário */}
@@ -105,6 +114,9 @@ const Home = () => {
           <Image style={styles.icon} source={require('../assets/Elements/mais.png')} />
         </Button>
         <Button style={styles.navButton}>
+          <Image style={styles.icon} source={require('../assets/Elements/alarme.png')} />
+        </Button>
+        <Button onPress={handleCallNotifications} style={styles.navButton}>
           <Image style={styles.icon} source={require('../assets/Elements/alarme.png')} />
         </Button>
       </View>
