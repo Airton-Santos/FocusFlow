@@ -1,46 +1,74 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ImageBackground, FlatList } from 'react-native';
 import { Button, List } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { auth, db } from '../firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from 'expo-task-manager';
 
-
+// Configuração da notificação
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
-const Home = () => {
+// Função para agendar a notificação
+const sendNotification = async () => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Tarefas Pendentes',
+      body: 'Você tem tarefas pendentes no seu gerenciador de tarefas.',
+    },
+    trigger: {
+      seconds: 60, // Enviar notificação a cada 60 segundos
+      repeats: true, // Repetir a notificação
+    },
+  });
+};
 
+// Registrar tarefa em segundo plano
+TaskManager.defineTask('background-fetch', async () => {
+  try {
+    // Verifica se há tarefas pendentes e envia a notificação
+    const tarefasExistem = tarefas.length > 0;
+    if (tarefasExistem) {
+      await sendNotification();
+    }
+    return BackgroundFetch.Result.NewData; // Retorna sucesso
+  } catch (error) {
+    console.error('Erro ao buscar em segundo plano:', error);
+    return BackgroundFetch.Result.Failed; // Em caso de erro
+  }
+});
+
+const Home = () => {
   const [tarefas, setTarefas] = useState([]);
   const user = auth.currentUser;
-  const router = useRouter(); // Inicializando o roteador
+  const router = useRouter(); 
 
   // Função para navegar para a página de configurações
   const goToConfig = () => {
     router.replace('/config');
   };
-  
+
   // Função para navegar para a página de adicionar tarefas
   const goToAddTask = () => {
     router.replace('/addTarefas');
   };
 
   const verTarefa = (id) => {
-    router.replace({pathname: '/[id]', params: {id: id}});
+    router.replace({ pathname: '/[id]', params: { id: id } });
   };
 
   const getAllTarefas = async () => {
     try {
-      const querySnapshot = await getDocs(query(collection(db, "Tarefas"), where("idUser", "==", user.uid)));
-      let array = querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data() }));
+      const querySnapshot = await getDocs(query(collection(db, 'Tarefas'), where('idUser', '==', user.uid)));
+      let array = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setTarefas(array);
     } catch (error) {
       console.error(error);
@@ -51,17 +79,46 @@ const Home = () => {
     getAllTarefas();
   }, []);
 
-  // Função para renderizar cada tarefa na FlatList
+  useEffect(() => {
+    if (tarefas.length > 0) {
+      const sendNotification = async () => {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Tarefas Pendentes',
+            body: 'Você tem tarefas pendentes no seu gerenciador de tarefas.',
+          },
+          trigger: {
+            seconds: 1, // A cada 60 segundos
+            repeats: true, // Repetir a notificação
+          },
+        });
+      };
+      sendNotification();
+    }
+  }, [tarefas]);
+
+  useEffect(() => {
+    // Registrar o fetch em segundo plano
+    const registerBackgroundFetch = async () => {
+      await BackgroundFetch.registerTaskAsync('background-fetch', {
+        minimumInterval: 60, // Mínimo intervalo de 60 segundos
+        stopOnTerminate: false, // Não parar ao encerrar o app
+        startOnBoot: true, // Iniciar quando o dispositivo for reiniciado
+      });
+    };
+    registerBackgroundFetch();
+  }, []);
+
   const renderTask = ({ item }) => (
     <List.Item
-      title={item.titulo} // Título da tarefa
+      title={item.titulo}
       right={() => (
         <View style={styles.taskActions}>
-          <List.Icon icon={item.conclusaoDaTarefa ? "check-circle-outline" : "circle-outline"} /> 
+          <List.Icon icon={item.conclusaoDaTarefa ? 'check-circle-outline' : 'circle-outline'} />
         </View>
       )}
       style={styles.taskItem}
-      titleStyle={{ color: '#FFF' }} // Define a cor do texto como branco
+      titleStyle={{ color: '#FFF' }}
       onPress={() => verTarefa(item.id)}
     />
   );
@@ -89,9 +146,9 @@ const Home = () => {
           <Text style={styles.taskTitle}>Minhas Tarefas</Text>
           <FlatList
             data={tarefas}
-            keyExtractor={(item) => item.id} // Chave única para cada item
-            renderItem={renderTask} // Função que renderiza cada item
-            ListEmptyComponent={<Text style={styles.emptyMessage}>Nenhuma tarefa encontrada.</Text>} // Mensagem para lista vazia
+            keyExtractor={(item) => item.id}
+            renderItem={renderTask}
+            ListEmptyComponent={<Text style={styles.emptyMessage}>Nenhuma tarefa encontrada.</Text>}
           />
         </ImageBackground>
       </View>
@@ -114,7 +171,6 @@ const Home = () => {
 
 export default Home;
 
-// Estilos do componente
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -182,13 +238,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10, // Adicionando padding vertical para controle de altura
+    paddingVertical: 10,
   },
 
   taskActions: {
     flexDirection: 'row',
-    alignItems: 'center', // Alinha os ícones na mesma linha
-    justifyContent: 'flex-end', // Coloca os ícones na extremidade direita
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
 
   emptyMessage: {
